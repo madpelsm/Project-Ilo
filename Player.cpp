@@ -1,12 +1,20 @@
 #include "Player.h"
 
-Player::Player() {
-    mVertices.push_back(Vertex(glm::vec3(1, 0, 0), glm::vec3(1, 0, 0)));
-    mVertices.push_back(Vertex(glm::vec3(0, 1, 0), glm::vec3(0, 1, 0)));
-    mVertices.push_back(Vertex(glm::vec3(-1, 0, 0), glm::vec3(0, 0, 1)));
+Player::Player() {/*
+    mVertices.push_back(Vertex(glm::vec3(-1, 0, 0), glm::vec3(1, 0, 0)));
+    mVertices.push_back(Vertex(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0)));
+    mVertices.push_back(Vertex(glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
+
+    mVertices.push_back(Vertex(glm::vec3(1.5f, 0, 0), glm::vec3(1, 0, 0)));
+    mVertices.push_back(Vertex(glm::vec3(2.5f, 0, 0), glm::vec3(0, 1, 0)));
+    mVertices.push_back(Vertex(glm::vec3(2.0f, 1, 0), glm::vec3(0, 0, 1)));*/
+    objectLoader objLoader("shapes/cornell_box.obj");
+    mVertices2 = objLoader.getVertices();
     std::cout << "Standard player created" << std::endl;
-    createIndices();
-    createNormals();
+    mIndices = objLoader.getIndices();
+
+    //createIndices();
+    //createNormals();
 }
 Player::~Player() {
 
@@ -30,9 +38,10 @@ void Player::setShape(std::vector<Vertex> vertices) {
 }
 
 void Player::createIndices() {
-    for (unsigned int i = 0; i < mVertices.size(); i++) {
-        mIndices.push_back(i);
+    for (unsigned int i = 0; i < mVertices2.size(); i++) {
+        mIndices.push_back((GLushort)i);
     }
+
 }
 
 void Player::createNormals() {
@@ -43,8 +52,8 @@ void Player::createNormals() {
         Vertex tempVertex1 = mVertices[i];
         Vertex tempVertex2 = mVertices[i+1];
         Vertex tempVertex3 = mVertices[i+2];
-        glm::vec3 a = tempVertex2.Pos - tempVertex1.Pos;
-        glm::vec3 b = tempVertex3.Pos - tempVertex1.Pos;
+        glm::vec3 a = tempVertex2.Pos - tempVertex1.Pos;//from vert 1 to vert 2
+        glm::vec3 b = tempVertex3.Pos - tempVertex1.Pos;//from vert1 to vert 3
         glm::vec3 normal = glm::normalize(glm::cross(a, b));
         mVertices2.push_back(Vertex2(tempVertex1, normal));
         mVertices2.push_back(Vertex2(tempVertex2, normal));
@@ -62,7 +71,7 @@ glm::vec3 Player::getPosition() {
 void Player::render() {
 
     glBindVertexArray(mVaoPlayer);
-    glDrawElements(GL_TRIANGLE_STRIP, mIndices.size(), GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_SHORT, 0);
 }
 
 void Player::init() {
@@ -73,11 +82,9 @@ void Player::init() {
 
     glGenVertexArrays(1, &mVaoPlayer);
     glBindVertexArray(mVaoPlayer);
-    std::cout << mVaoPlayer << std::endl;
     //create bind and upload
 
     glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-
     //location
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), 0);
@@ -92,7 +99,7 @@ void Player::init() {
     glGenBuffers(1, &mIbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*mIndices.size(), &mIndices[0], GL_STATIC_DRAW);
-
+    std::cout << "drawing " << 3*mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 
 }

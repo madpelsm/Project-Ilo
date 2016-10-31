@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "objLoader.h"
 
 class Player : GameObject {
 private:

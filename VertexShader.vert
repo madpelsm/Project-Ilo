@@ -6,6 +6,7 @@ layout (location = 2) in vec3 inNormal;
 uniform mat4 persp;
 uniform mat4 model;
 uniform mat4 cam;
+
 smooth out vec3 color;
 out vec3 outNormal;
 
