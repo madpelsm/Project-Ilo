@@ -1,0 +1,4 @@
+﻿  Player.cpp
+cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Debug\Project Ilo.exe
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Debug\Project Ilo.pdb (Partial PDB)
