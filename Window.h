@@ -7,6 +7,9 @@
 #include <glm.hpp>
 #include "glm\glm\gtc\matrix_transform.hpp"
 #include "glm\glm\gtc\type_ptr.hpp"
+#include "Camera.h"
+#include "GameObject.h"
+#include "Player.h"
 
 class Window {
     int mWidth, mHeight;
@@ -14,13 +17,16 @@ class Window {
     bool closed = false;
     bool windowInitialised = false;
     short frames;
+    float lastTime = SDL_GetTicks();
 public:
-
+    Camera mCamera;
     ShaderProgram p1;
     SDL_Window * mSDLwindow=nullptr;
     SDL_GLContext glContext;
     SDL_Event event;
     Shader vertShader, fragShader;
+    std::vector<GameObject> mGameObjects;
+    Player mPlayer;
 
 
     Window();
@@ -36,4 +42,7 @@ public:
     void checkEvents();
     void resize();
     void destroyShaders();
+
+    void setCamera(Camera c);
+    void setPlayer(Player p);
 };

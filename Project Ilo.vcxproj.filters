@@ -70,5 +70,11 @@
     <None Include="geometryShader.geom">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="PlayerFragShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PlayerVertexShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

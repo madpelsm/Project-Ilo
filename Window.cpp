@@ -10,6 +10,8 @@ Window::Window(int width, int height, std::string title) {
     mWidth = width;
     mHeight = height;
     mTitle = title;
+    std::cout << "Window with parameters set" << std::endl;
+    init();
 }
 
 Window::~Window() {
@@ -38,8 +40,10 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
 
-    initGL();
     windowInitialised = true;
+    std::cout << "Window initialised correctly" << std::endl;
+
+    initGL();
 
 }
 
@@ -57,12 +61,14 @@ void Window::initGL() {
     p1.attachShaderToProgram(&fragShader);
     p1.linkProgram();
     p1.useProgram();
-
+    std::cout << "OpenGL window initialised" << std::endl;
     destroyShaders();
+
 }
 
 void Window::run() {
     if (!windowInitialised) {
+        std::cout << "Window not initialised" << std::endl;
         return;
     }
     while (!closed) {
@@ -87,8 +93,12 @@ void Window::checkEvents() {
 
 void Window::update() {
     int perspLoc = glGetUniformLocation(p1.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(90.0f, mWidth / (float)mHeight, 0.1f, 10.0f); //90 degrees fov
+    glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
     glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
+
+
+    int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
+    glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
     //update perspective
     //camera update
 
@@ -102,13 +112,19 @@ void Window::upload() {
 }
 
 void Window::render() {
+    glClearColor(0, 0, 0.4*sin(SDL_GetTicks() / 1000.0) + 0.6,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    frames++;
+    mPlayer.render();
+
+
     SDL_GL_SwapWindow(mSDLwindow);
-    if (SDL_GetTicks() % 1000 == 0) {
-        std::cout << frames << "FPS" << std::endl;
+    float currentTime = SDL_GetTicks();
+    frames++;
+    if (currentTime - lastTime >= 1000) {
+        std::cout << frames << std::endl;
         frames = 0;
+        lastTime += 1000;
     }
 }
 
@@ -122,4 +138,14 @@ void Window::destroyShaders(){
     p1.deleteProgram();
     vertShader.deleteShader();
     fragShader.deleteShader();
+}
+
+void Window::setCamera(Camera c) {
+    mCamera = c;
+}
+
+void Window::setPlayer(Player p) {
+    //set the player for this game
+    mPlayer = p;
+
 }

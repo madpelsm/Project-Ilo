@@ -11,6 +11,7 @@ class Camera {
     GLuint mShaderProgramID;
 
 public:
+    Camera();
     Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up,int shaderProgramID);
     ~Camera();
 
