@@ -1,6 +1,3 @@
-﻿  Window.cpp
-c:\users\mathi\documents\github\project-ilo\window.h(20): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
-c:\users\mathi\documents\github\project-ilo\window.cpp(115): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-c:\users\mathi\documents\github\project-ilo\window.cpp(122): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+﻿  Player.cpp
   Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe
   Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.pdb (Partial PDB)

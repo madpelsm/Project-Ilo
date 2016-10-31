@@ -86,21 +86,24 @@ void Window::checkEvents() {
             sdlDie();
         }
         if (event.type == SDL_WINDOWEVENT_RESIZED) {
+            std::cout << "resized!" << std::endl;
             resize();
         }
     }
 }
 
 void Window::update() {
+    resize();
     int perspLoc = glGetUniformLocation(p1.getProgramID(), "persp");
     glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
     glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
+    //set camera
+    mCamera.uploadCameraInfo();
 
+    //set modelTransformations
     int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
     glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
-    //update perspective
-    //camera update
 
     //update gameobjects
     //box2d! pass a world
@@ -112,8 +115,9 @@ void Window::upload() {
 }
 
 void Window::render() {
-    glClearColor(0, 0, 0.4*sin(SDL_GetTicks() / 1000.0) + 0.6,1);
+    //glClearColor(0, 0, 0.4*sin(SDL_GetTicks() / 1000.0) + 0.6,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
     mPlayer.render();
 

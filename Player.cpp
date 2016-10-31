@@ -46,9 +46,11 @@ void Player::createNormals() {
         glm::vec3 a = tempVertex2.Pos - tempVertex1.Pos;
         glm::vec3 b = tempVertex3.Pos - tempVertex1.Pos;
         glm::vec3 normal = glm::normalize(glm::cross(a, b));
-        mNormals.push_back(normal);
-        mNormals.push_back(normal);
-        mNormals.push_back(normal);
+        mVertices2.push_back(Vertex2(tempVertex1, normal));
+        mVertices2.push_back(Vertex2(tempVertex2, normal));
+        mVertices2.push_back(Vertex2(tempVertex3, normal));
+
+
     }
     std::cout << "normals Created for player" << std::endl;
 }
@@ -64,28 +66,27 @@ void Player::render() {
 }
 
 void Player::init() {
-    glGenVertexArrays(1, &mVaoPlayer);
-    glBindVertexArray(mVaoPlayer);
-
-    //create bind and upload
+    //vertexBuffer
     glGenBuffers(1, &mVbo);
     glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*mVertices.size(), &mVertices[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2)*mVertices2.size(), &mVertices2[0], GL_DYNAMIC_DRAW);
 
+    glGenVertexArrays(1, &mVaoPlayer);
+    glBindVertexArray(mVaoPlayer);
+    std::cout << mVaoPlayer << std::endl;
+    //create bind and upload
 
-    glGenBuffers(1, &mNormID);
-    glBindBuffer(GL_ARRAY_BUFFER, mNormID);
-    glBufferData(GL_ARRAY_BUFFER, mNormals.size() * sizeof(glm::vec3), &mNormals[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, mVbo);
 
     //location
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), 0);
     //color
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid *) sizeof(glm::vec3));
-    ////normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), (GLvoid *) sizeof(glm::vec3));
+    //Normals
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), (GLvoid *) (2*sizeof(glm::vec3)));
 
     //indices 
     glGenBuffers(1, &mIbo);

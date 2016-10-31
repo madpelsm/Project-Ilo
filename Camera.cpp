@@ -1,5 +1,5 @@
 #include "Camera.h"
-
+#include <iostream>
 
 Camera::Camera() {
 }
@@ -34,5 +34,6 @@ void Camera::uploadCameraInfo() {
     glProgramUniformMatrix4fv(mShaderProgramID, camLocation, 1, GL_FALSE, glm::value_ptr(mCamera));
 }
 void Camera::update() {
+    std::cout << "Camera updated" << std::endl;
     mCamera = glm::lookAt(mPosition, mTarget, mUp);
 }

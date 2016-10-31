@@ -7,8 +7,8 @@ class Player : GameObject {
 private:
     float mX=0, mY=0, mRotAngle=0;
     std::vector<Vertex> mVertices;
+    std::vector<Vertex2> mVertices2;//contains normalinfo
     std::vector<GLushort> mIndices;
-    std::vector<glm::vec3> mNormals;
     Shader vertShader, fragShader;
     ShaderProgram p1;
 
@@ -16,7 +16,7 @@ private:
 public:
 
     glm::mat4 mTransformation = glm::mat4(1);
-    GLuint mVaoPlayer, mVbo, mIbo,mNormID;
+    GLuint mVaoPlayer, mVbo, mIbo;
     Player();
     ~Player();
     
