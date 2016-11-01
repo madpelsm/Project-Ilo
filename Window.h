@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Light.h"
 
 class Window {
     int mWidth, mHeight;
@@ -27,6 +28,7 @@ public:
     Shader vertShader, fragShader;
     std::vector<GameObject> mGameObjects;
     Player mPlayer;
+    Light mOmniLight;
 
 
     Window();
@@ -35,6 +37,7 @@ public:
     void sdlDie();
     void init();
     void initGL();
+    void initAssets();
     void run();
     void update();
     void upload();
@@ -45,4 +48,5 @@ public:
 
     void setCamera(Camera c);
     void setPlayer(Player p);
+    void setLight(Light light);
 };

@@ -120,6 +120,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad\src\glad.c" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objLoader.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -131,6 +132,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="objLoader.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Shader.h" />

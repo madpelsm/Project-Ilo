@@ -1,23 +1,22 @@
 #include "Player.h"
 
-Player::Player() {/*
-    mVertices.push_back(Vertex(glm::vec3(-1, 0, 0), glm::vec3(1, 0, 0)));
-    mVertices.push_back(Vertex(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0)));
-    mVertices.push_back(Vertex(glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
-
-    mVertices.push_back(Vertex(glm::vec3(1.5f, 0, 0), glm::vec3(1, 0, 0)));
-    mVertices.push_back(Vertex(glm::vec3(2.5f, 0, 0), glm::vec3(0, 1, 0)));
-    mVertices.push_back(Vertex(glm::vec3(2.0f, 1, 0), glm::vec3(0, 0, 1)));*/
-    objectLoader objLoader("shapes/cornell_box.obj");
-    mVertices2 = objLoader.getVertices();
-    std::cout << "Standard player created" << std::endl;
-    mIndices = objLoader.getIndices();
-
-    //createIndices();
-    //createNormals();
+Player::Player() {
+   
 }
 Player::~Player() {
 
+}
+
+void Player::loadGeometry(std::string filePath) {
+
+    //gets Vertex2 objects, so it contains normals
+    objectLoader objLoader(filePath);
+    mVertices2 = objLoader.getVertices();
+    std::cout << "Player Geometry loaded" << std::endl;
+    mIndices = objLoader.getIndices();
+
+    //createNormals();
+    createIndices();
 }
 
 void Player::setTransform(float x, float y, float angle) {
@@ -25,7 +24,6 @@ void Player::setTransform(float x, float y, float angle) {
     mX = x;
     mY = y;
     mRotAngle = angle;
-    mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, 0)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
 
 }
 
@@ -38,8 +36,10 @@ void Player::setShape(std::vector<Vertex> vertices) {
 }
 
 void Player::createIndices() {
-    for (unsigned int i = 0; i < mVertices2.size(); i++) {
+    for (unsigned int i = 0; i < mVertices2.size(); i+=3) {
         mIndices.push_back((GLushort)i);
+        mIndices.push_back((GLushort)i+1);
+        mIndices.push_back((GLushort)i+2);
     }
 
 }
@@ -52,14 +52,14 @@ void Player::createNormals() {
         Vertex tempVertex1 = mVertices[i];
         Vertex tempVertex2 = mVertices[i+1];
         Vertex tempVertex3 = mVertices[i+2];
-        glm::vec3 a = tempVertex2.Pos - tempVertex1.Pos;//from vert 1 to vert 2
-        glm::vec3 b = tempVertex3.Pos - tempVertex1.Pos;//from vert1 to vert 3
+        glm::vec3 a = tempVertex3.Pos - tempVertex1.Pos;//from vert 1 to vert 2
+        glm::vec3 b = tempVertex2.Pos - tempVertex1.Pos;//from vert1 to vert 3
         glm::vec3 normal = glm::normalize(glm::cross(a, b));
         mVertices2.push_back(Vertex2(tempVertex1, normal));
         mVertices2.push_back(Vertex2(tempVertex2, normal));
         mVertices2.push_back(Vertex2(tempVertex3, normal));
 
-
+        
     }
     std::cout << "normals Created for player" << std::endl;
 }
@@ -68,10 +68,21 @@ glm::vec3 Player::getPosition() {
     return glm::vec3(mX, mY, 0);
 }
 
+void Player::update() {
+
+    mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, 0)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
+}
+
 void Player::render() {
 
     glBindVertexArray(mVaoPlayer);
-    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES,mIndices.size(), GL_UNSIGNED_SHORT, 0);
+    refreshShaderTransforms();
+}
+
+void Player::refreshShaderTransforms() {
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
 
 void Player::init() {

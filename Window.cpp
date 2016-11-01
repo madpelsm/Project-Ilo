@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window::Window() {
+Window::Window(){
     mWidth = 800;
     mHeight = 600;
     mTitle = "untitled";
@@ -47,9 +47,27 @@ void Window::init() {
 
 }
 
+void Window::initAssets() {
+    mPlayer.init();
+
+}
+
 void Window::initGL() {
     gladLoadGLLoader(SDL_GL_GetProcAddress);
     glViewport(0, 0, mWidth, mHeight);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //depth testing
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LESS);
+
+    //face culling
+    glEnable(GL_CULL_FACE);
+    //discard (cull) the back facing faces and define the winding order
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
+
+
 
     //load in shaders
     vertShader.loadShader("VertexShader.vert", GL_VERTEX_SHADER);
@@ -89,6 +107,26 @@ void Window::checkEvents() {
             std::cout << "resized!" << std::endl;
             resize();
         }
+        if (event.type == SDL_KEYDOWN){
+            std::cout << "key pressed: ";
+            if (event.key.keysym.scancode == SDL_SCANCODE_A) {
+                std::cout << "left";
+                mPlayer.mX -= mPlayer.xSpd;
+            }
+            else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
+                std::cout << "right";
+                mPlayer.mX += mPlayer.xSpd;
+            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_W) {
+                std::cout << "up";
+                mPlayer.mY += mPlayer.ySpd;
+            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_S) {
+                std::cout << "down";
+                mPlayer.mY -= mPlayer.ySpd;
+            }
+            std::cout<<"."<<std::endl;
+        }
     }
 }
 
@@ -99,19 +137,29 @@ void Window::update() {
     glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     //set camera
+    mCamera.mTarget = glm::vec3(mPlayer.mX, mPlayer.mY, 0);
+    mCamera.update();
     mCamera.uploadCameraInfo();
 
     //set modelTransformations
     int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
     glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
 
+
+    float xL = 0;
+    float yL = sin(SDL_GetTicks() / 1000.0f) * 5;
+    float zL = 3;
+    mOmniLight.move(xL,yL,zL);
     //update gameobjects
+    mPlayer.update();
     //box2d! pass a world
 
 }
 
 void Window::upload() {
     //upload data
+    mOmniLight.upload(p1.getProgramID());
+
 }
 
 void Window::render() {
@@ -152,4 +200,8 @@ void Window::setPlayer(Player p) {
     //set the player for this game
     mPlayer = p;
 
+}
+
+void Window::setLight(Light light) {
+    mOmniLight = light;
 }

@@ -9,10 +9,12 @@ uniform mat4 cam;
 
 smooth out vec3 color;
 out vec3 outNormal;
+smooth out vec3 FragPos;
 
 void main()
 {
 	gl_Position=persp*cam*model*vec4(inPosition,1.0);
 	outNormal = mat3(transpose(inverse(model)))*inNormal;
 	color = inColor;
+	FragPos = vec3(model*vec4(inPosition,1.0f));
 }

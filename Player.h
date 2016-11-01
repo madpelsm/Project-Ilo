@@ -6,16 +6,18 @@
 
 class Player : GameObject {
 private:
-    float mX=0, mY=0, mRotAngle=0;
     std::vector<Vertex> mVertices;
     std::vector<Vertex2> mVertices2;//contains normalinfo
     std::vector<GLushort> mIndices;
-    Shader vertShader, fragShader;
-    ShaderProgram p1;
+    /*Shader vertShader, fragShader;
+    ShaderProgram p1;*/
+    GLuint shaderProgramID;
 
 
 public:
 
+    float mX = 0, mY = 0, mRotAngle = 0,
+        xSpd = 0.01f,ySpd=0.01f;
     glm::mat4 mTransformation = glm::mat4(1);
     GLuint mVaoPlayer, mVbo, mIbo;
     Player();
@@ -24,7 +26,10 @@ public:
     void init();
     void setTransform(float x, float y, float angle);
     void setShape(std::vector<Vertex> vertices);
+    void loadGeometry(std::string filePath);
+    void refreshShaderTransforms();
 
+    void update();
     void createIndices();
     void createNormals();
     glm::vec3 getPosition();
