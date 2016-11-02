@@ -26,20 +26,19 @@ void Window::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "failed to intialise video" << std::endl;
     }
-    mSDLwindow = SDL_CreateWindow(mTitle.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
-        mWidth,mHeight,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE |SDL_WINDOW_SHOWN
-    );
+    mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN
+        );
+    if (mSDLwindow == nullptr) {
+        std::cout << "failed to create Window" << std::endl;
+    }
+    glContext = SDL_GL_CreateContext(mSDLwindow);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
     SDL_GL_SetSwapInterval(1);
-    if (mSDLwindow == nullptr) {
-        std::cout << "failed to create Window" << std::endl;
-    }
-    glContext = SDL_GL_CreateContext(mSDLwindow);
-
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -66,7 +65,6 @@ void Window::initGL() {
     //discard (cull) the back facing faces and define the winding order
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
-
 
 
     //load in shaders

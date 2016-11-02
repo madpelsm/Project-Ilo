@@ -110,7 +110,7 @@ void Player::init() {
     glGenBuffers(1, &mIbo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*mIndices.size(), &mIndices[0], GL_STATIC_DRAW);
-    std::cout << "drawing " << 3*mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
+    std::cout << "drawing " << mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 
 }
