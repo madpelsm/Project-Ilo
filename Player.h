@@ -18,7 +18,7 @@ private:
 public:
 
     float mX = 0, mY = 0,mZ=0, mRotAngle = 0,
-        xSpd = 0.05f,ySpd=0.05f;
+        xSpd = 0.5f,ySpd=0.5f;
     glm::mat4 mTransformation = glm::mat4(1);
     GLuint mVaoPlayer, mVbo, mIbo,mInstanceVBO;
     Player();
