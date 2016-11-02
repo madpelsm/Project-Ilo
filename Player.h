@@ -8,18 +8,19 @@ class Player : GameObject {
 private:
     std::vector<Vertex> mVertices;
     std::vector<Vertex2> mVertices2;//contains normalinfo
-    std::vector<GLushort> mIndices;
+    std::vector<GLuint> mIndices;
     /*Shader vertShader, fragShader;
     ShaderProgram p1;*/
     GLuint shaderProgramID;
-
+    int instances = 2;
+    std::vector<glm::vec3> mOffsets;
 
 public:
 
-    float mX = 0, mY = 0, mRotAngle = 0,
-        xSpd = 0.01f,ySpd=0.01f;
+    float mX = 0, mY = 0,mZ=0, mRotAngle = 0,
+        xSpd = 0.05f,ySpd=0.05f;
     glm::mat4 mTransformation = glm::mat4(1);
-    GLuint mVaoPlayer, mVbo, mIbo;
+    GLuint mVaoPlayer, mVbo, mIbo,mInstanceVBO;
     Player();
     ~Player();
     
@@ -29,6 +30,7 @@ public:
     void loadGeometry(std::string filePath);
     void refreshShaderTransforms();
 
+    void fillOffsets(); //temp stuff to try out instancing
     void update();
     void createIndices();
     void createNormals();

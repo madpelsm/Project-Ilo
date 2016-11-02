@@ -10,16 +10,17 @@ struct OmniLight{
 	
 
 };
-
-vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight);
-#define Amount_omniLights 1
-
-
 in VS_OUT {
 	vec3 outNormal;
 	vec3 FragPos;
 	vec3 color;
 } vs_in;
+
+vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight);
+#define Amount_omniLights 1
+
+
+
 
 
 uniform OmniLight omniLights[Amount_omniLights];
@@ -27,6 +28,18 @@ uniform vec3 eyePos;
 
 out vec4 FragColor;
 
+
+
+void main()
+{
+	vec3 lightedColor=vec3(0,0,0);
+	for(int i=0;i<Amount_omniLights;i++){
+		
+	lightedColor+= calculateLightColor(vs_in.FragPos,vs_in.outNormal,omniLights[i])*vs_in.color;
+	}
+
+	FragColor = vec4(pow(lightedColor,vec3(0.4545) ), 1.0);
+}
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 	//set specular amount
 	
@@ -34,8 +47,11 @@ vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 	vec3 viewDir = normalize(eyePos-FragPos);
 	vec3 reflectDir = reflect(lightDir,normal);
 
-	float spec = pow(max(dot(viewDir, normalize(reflectDir)), 0.0), 32);
-	float specStrength = 0.1f;
+	//shininess and specStrength should become material dependend values
+	float shininess = 64;
+	float specStrength = 0.7f;
+
+	float spec = pow(max(dot(viewDir, normalize(reflectDir)), 0.0), shininess);
 
 	float specularBit = spec*specStrength;
 	
@@ -46,16 +62,5 @@ vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 		float att = 1.0f/(1.0f+distance);
 		float diffuseBit = max(dot(normalize(lightDir),normal),0)*att;
 		//TODO set a specular similiar to phong shading
-		return (specularBit+omniLight.ambient+diffuseBit)*omniLight.lightColor;
-	
+		return (att*specularBit+omniLight.ambient+diffuseBit)*omniLight.lightColor;
 	}
-
-void main()
-{
-	vec3 lightedColor;
-	for(int i=0;i<Amount_omniLights;i++){
-		
-	lightedColor+= calculateLightColor(vs_in.FragPos,vs_in.outNormal,omniLights[i])*vs_in.color;
-	}
-	FragColor = vec4(pow(lightedColor,vec3(0.4545) ), 1.0);
-}

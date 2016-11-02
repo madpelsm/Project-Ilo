@@ -70,8 +70,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\mathi\Documents\GitHub\Project-Ilo\SDL2-2.0.4\lib\x86;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\mathi\Documents\GitHub\Project-Ilo\glad\include;C:\Users\mathi\Documents\GitHub\Project-Ilo\glm\glm;C:\Users\mathi\Documents\GitHub\Project-Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm\glm;$(IncludePath)</IncludePath>

@@ -13,7 +13,6 @@ void Player::loadGeometry(std::string filePath) {
     objectLoader objLoader(filePath);
     mVertices2 = objLoader.getVertices();
     std::cout << "Player Geometry loaded" << std::endl;
-    mIndices = objLoader.getIndices();
 
     //createNormals();
     createIndices();
@@ -37,9 +36,9 @@ void Player::setShape(std::vector<Vertex> vertices) {
 
 void Player::createIndices() {
     for (unsigned int i = 0; i < mVertices2.size(); i+=3) {
-        mIndices.push_back((GLushort)i);
-        mIndices.push_back((GLushort)i+1);
-        mIndices.push_back((GLushort)i+2);
+        mIndices.push_back(i);
+        mIndices.push_back(i+1);
+        mIndices.push_back(i+2);
     }
 
 }
@@ -65,19 +64,31 @@ void Player::createNormals() {
 }
 
 glm::vec3 Player::getPosition() {
-    return glm::vec3(mX, mY, 0);
+    return glm::vec3(mX, mY, mZ);
+}
+void Player::fillOffsets() {
+    //make only 3 instances
+    std::cout << "filling offsets"<<std::endl;
+    for (unsigned int i = 0; i < 5; i++) {
+        for (unsigned int j = 0; j < 5; j++) {
+            mOffsets.push_back(glm::vec3((5.0f)*j - 2.5f*5.0f, 0, (-8.0f)*i));
+        }
+    }
+
 }
 
 void Player::update() {
 
-    mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, 0)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
+    mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
 }
 
 void Player::render() {
 
     glBindVertexArray(mVaoPlayer);
-    glDrawElements(GL_TRIANGLES,mIndices.size(), GL_UNSIGNED_SHORT, 0);
+
+    glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size() , GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
+    //glDrawElements(GL_TRIANGLES,mIndices.size(), GL_UNSIGNED_INT, &mIndices[0]);
     refreshShaderTransforms();
 }
 
@@ -86,8 +97,14 @@ void Player::refreshShaderTransforms() {
 }
 
 void Player::init() {
+    //test fill the offsetarray (contains offset vectors)
+    fillOffsets();
+
     //vertexBuffer
     glGenBuffers(1, &mVbo);
+    glGenBuffers(1, &mInstanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, mOffsets.size()*sizeof(glm::vec3), &mOffsets[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, mVbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2)*mVertices2.size(), &mVertices2[0], GL_STATIC_DRAW);
 
@@ -105,11 +122,17 @@ void Player::init() {
     //Normals
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), (GLvoid *) (2*sizeof(glm::vec3)));
+    //instancing
+    glEnableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+    glVertexAttribDivisor(3, 1);
 
-    //indices 
-    glGenBuffers(1, &mIbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort)*mIndices.size(), &mIndices[0], GL_STATIC_DRAW);
+
+    ////indices 
+    //glGenBuffers(1, &mIbo);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*mIndices.size(), &mIndices[0], GL_STATIC_DRAW);
     std::cout << "drawing " << mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 

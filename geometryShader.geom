@@ -8,10 +8,10 @@ in VS_OUT {
 	vec3 color;
 } gs_in[];
 
-out VS_OUT{
+out VS_OUT2{
 	vec3 outNormal;
-	vec3 color;
 	vec3 FragPos;
+	vec3 color;
 } vs_out;
 
 
