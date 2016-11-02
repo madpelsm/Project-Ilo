@@ -15,6 +15,7 @@ Window::Window(int width, int height, std::string title) {
 }
 
 Window::~Window() {
+    destroyShaders();
     sdlDie();
 }
 void Window::sdlDie() {
@@ -70,15 +71,16 @@ void Window::initGL() {
     //load in shaders
     vertShader.loadShader("VertexShader.vert", GL_VERTEX_SHADER);
     fragShader.loadShader("FragmentShader.frag", GL_FRAGMENT_SHADER);
-
+    geometryShader.loadShader("geometryShader.geom", GL_GEOMETRY_SHADER);
+    // add in later, a simple pass through geometry shader (can be useful later on)
     //create attach link use
     p1.createProgram();
     p1.attachShaderToProgram(&vertShader);
+    p1.attachShaderToProgram(&geometryShader);
     p1.attachShaderToProgram(&fragShader);
     p1.linkProgram();
     p1.useProgram();
     std::cout << "OpenGL window initialised" << std::endl;
-    destroyShaders();
 
 }
 
@@ -144,10 +146,10 @@ void Window::update() {
     glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
 
 
-    float xL = 0;
+    /*float xL = 0;
     float yL = sin(SDL_GetTicks() / 1000.0f) * 5;
     float zL = 3;
-    mOmniLight.move(xL,yL,zL);
+    mOmniLight.move(xL,yL,zL);*/
     //update gameobjects
     mPlayer.update();
     //box2d! pass a world
@@ -163,8 +165,7 @@ void Window::upload() {
 void Window::render() {
     //glClearColor(0, 0, 0.4*sin(SDL_GetTicks() / 1000.0) + 0.6,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
+    
     mPlayer.render();
 
 

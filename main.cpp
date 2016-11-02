@@ -10,7 +10,7 @@ int main(int argc, char * argv[]) {
     w.setPlayer(p1);
     w.mPlayer.loadGeometry("shapes/untitled.obj");
     //set camera
-    Light OmniLight(glm::vec3(0, 0, 0),0.01f,glm::vec3(1,1,1));
+    Light OmniLight(glm::vec3(0, 0, 2),0.01f,glm::vec3(1,1,1));
     w.setLight(OmniLight);
     w.initAssets();
     w.run();

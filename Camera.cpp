@@ -32,6 +32,7 @@ void Camera::move(glm::vec3 target) {
 void Camera::uploadCameraInfo() {
     int camLocation = glGetUniformLocation(mShaderProgramID, "cam");
     glProgramUniformMatrix4fv(mShaderProgramID, camLocation, 1, GL_FALSE, glm::value_ptr(mCamera));
+    glUniform3f(glGetUniformLocation(mShaderProgramID, "eyePos"), mPosition.x, mPosition.y, mPosition.z);
 }
 void Camera::update() {
     mCamera = glm::lookAt(mPosition, mTarget, mUp);

@@ -89,7 +89,7 @@ void Player::init() {
     //vertexBuffer
     glGenBuffers(1, &mVbo);
     glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2)*mVertices2.size(), &mVertices2[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex2)*mVertices2.size(), &mVertices2[0], GL_STATIC_DRAW);
 
     glGenVertexArrays(1, &mVaoPlayer);
     glBindVertexArray(mVaoPlayer);

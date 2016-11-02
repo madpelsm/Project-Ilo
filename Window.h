@@ -25,7 +25,7 @@ public:
     SDL_Window * mSDLwindow=nullptr;
     SDL_GLContext glContext;
     SDL_Event event;
-    Shader vertShader, fragShader;
+    Shader vertShader, fragShader,geometryShader;
     std::vector<GameObject> mGameObjects;
     Player mPlayer;
     Light mOmniLight;

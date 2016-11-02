@@ -11,10 +11,16 @@ smooth out vec3 color;
 out vec3 outNormal;
 smooth out vec3 FragPos;
 
+out VS_OUT{
+    vec3 outNormal;
+	vec3 FragPos;
+	vec3 color;
+} vs_out;
+
 void main()
 {
 	gl_Position=persp*cam*model*vec4(inPosition,1.0);
-	outNormal = mat3(transpose(inverse(model)))*inNormal;
-	color = inColor;
-	FragPos = vec3(model*vec4(inPosition,1.0f));
+	vs_out.outNormal = mat3(transpose(inverse(model)))*inNormal;
+	vs_out.color = inColor;
+	vs_out.FragPos = vec3(model*vec4(inPosition,1.0f));
 }
