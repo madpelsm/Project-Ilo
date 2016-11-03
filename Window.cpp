@@ -29,7 +29,7 @@ void Window::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "failed to intialise video" << std::endl;
     }
-
+-
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);

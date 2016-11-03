@@ -48,8 +48,8 @@ vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 	vec3 reflectDir = reflect(lightDir,normal);
 
 	//shininess and specStrength should become material dependend values
-	float shininess = 64;
-	float specStrength = 0.9f;
+	float shininess = 32;
+	float specStrength = 1.0f;
 
 	float spec = pow(max(dot(viewDir, normalize(reflectDir)), 0.0), shininess);
 
@@ -60,6 +60,6 @@ vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 		float distance = dot(lightDir,lightDir);
 		//realistic attenuation
 		float att = 1.0f/(1.0f+distance);
-		float diffuseBit = max(dot(normalize(lightDir),normal),0)*att;
-		return (att*specularBit+omniLight.ambient+diffuseBit)*omniLight.lightColor;
+		float diffuseBit = max(dot(normalize(lightDir),normal),0);
+		return att*(specularBit+omniLight.ambient+diffuseBit)*omniLight.lightColor;
 	}
