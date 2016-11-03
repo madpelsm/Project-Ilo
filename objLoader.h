@@ -17,6 +17,7 @@ class objectLoader {
     std::string err;
 public:
     objectLoader(std::string filePath);
+    ~objectLoader();
     std::vector<Vertex2> getVertices();
     std::vector<GLushort> getIndices();
 };

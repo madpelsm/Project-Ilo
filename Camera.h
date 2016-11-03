@@ -19,4 +19,5 @@ public:
     void move(glm::vec3 target);
     void uploadCameraInfo();
     void update();
+    void rotate(float angle);
 };

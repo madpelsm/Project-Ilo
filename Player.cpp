@@ -13,7 +13,6 @@ void Player::loadGeometry(std::string filePath) {
     objectLoader objLoader(filePath);
     mVertices2 = objLoader.getVertices();
     std::cout << "Player Geometry loaded" << std::endl;
-
     //createNormals();
     createIndices();
 }
@@ -69,9 +68,9 @@ glm::vec3 Player::getPosition() {
 void Player::fillOffsets() {
     //make only 3 instances
     std::cout << "filling offsets"<<std::endl;
-    for (unsigned int i = 0; i < 5; i++) {
-        for (unsigned int j = 0; j < 5; j++) {
-            mOffsets.push_back(glm::vec3((5.0f)*j - 2.5f*5.0f, 0, (-8.0f)*i));
+    for (unsigned int i = 0; i < instances; i++) {
+        for (unsigned int j = 0; j < instances; j++) {
+            mOffsets.push_back(glm::vec3((5.0f)*j - (instances/2.0f)*5.0f, 0, (-8.0f)*i));
         }
     }
 
@@ -80,10 +79,12 @@ void Player::fillOffsets() {
 void Player::update() {
 
     mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
+   
 }
 
 void Player::render() {
+    //set transform
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
 
     glBindVertexArray(mVaoPlayer);
 
@@ -93,6 +94,7 @@ void Player::render() {
 }
 
 void Player::refreshShaderTransforms() {
+    //revert too unity as model matrix, ie no transforms
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
 

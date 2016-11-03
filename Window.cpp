@@ -20,6 +20,7 @@ Window::~Window() {
     sdlDie();
 }
 void Window::sdlDie() {
+    closed = true;
     SDL_DestroyWindow(mSDLwindow);
     SDL_Quit();
 }
@@ -28,6 +29,15 @@ void Window::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "failed to intialise video" << std::endl;
     }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
+
     mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN
         );
@@ -35,12 +45,7 @@ void Window::init() {
         std::cout << "failed to create Window" << std::endl;
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -83,6 +88,9 @@ void Window::initGL() {
     p1.useProgram();
     std::cout << "OpenGL window initialised" << std::endl;
     destroyShaders();
+    //clear the buffer before first render, it looks nicer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    SDL_GL_SwapWindow(mSDLwindow);
 }
 
 void Window::run() {
@@ -101,7 +109,6 @@ void Window::run() {
 void Window::checkEvents() {
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
-            closed = true;
             sdlDie();
         }
         if (event.type == SDL_WINDOWEVENT_RESIZED) {
@@ -112,19 +119,37 @@ void Window::checkEvents() {
             std::cout << "key pressed: ";
             if (event.key.keysym.scancode == SDL_SCANCODE_A) {
                 std::cout << "left";
-                mPlayer.mX -= mPlayer.xSpd;
+                mCamera.mPosition.x -= mPlayer.xSpd;
+                mCamera.mTarget.x -= mPlayer.xSpd;
+                //mPlayer.mX -= mPlayer.xSpd;
             }
             else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                 std::cout << "right";
-                mPlayer.mX += mPlayer.xSpd;
+                mCamera.mTarget.x += mPlayer.xSpd;
+                mCamera.mPosition.x += mPlayer.xSpd;
+                //mPlayer.mX += mPlayer.xSpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_W) {
                 std::cout << "up";
-                mPlayer.mZ += mPlayer.ySpd;
+                mCamera.mPosition.z -= mPlayer.ySpd;
+                mCamera.mTarget.z -= mPlayer.ySpd;
+                //mPlayer.mZ += mPlayer.ySpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_S) {
                 std::cout << "down";
-                mPlayer.mZ -= mPlayer.ySpd;
+                mCamera.mPosition.z += mPlayer.ySpd;
+                mCamera.mTarget.z += mPlayer.ySpd;
+                //mPlayer.mZ -= mPlayer.ySpd;
+            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_Q) {
+                std::cout << "down";
+                mCamera.rotate(0.01f);
+                //mPlayer.mZ -= mPlayer.ySpd;
+            }
+            if (event.key.keysym.scancode == SDL_SCANCODE_E) {
+                std::cout << "down";
+                mCamera.rotate(-0.01f);
+                //mPlayer.mZ -= mPlayer.ySpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
                 std::cout << "Closing";
@@ -138,36 +163,37 @@ void Window::checkEvents() {
 
 void Window::update() {
     resize();
-    int perspLoc = glGetUniformLocation(p1.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
-    glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
-    //set camera
-
+    //prepare the transformations
     mCamera.update();
-    mCamera.uploadCameraInfo();
-
-    //set modelTransformations
-    int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
-    glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
-
-
     mPlayer.update();
     //you can put lightmovements here 
-
+    mOmniLight.move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
     //update gameobjects
     //box2d! pass a world
 
 }
 
 void Window::upload() {
-    //upload data
+    //upload global values here, transformations of an object needs to happen within its ownd draw method
+    //upload perspective info
+    int perspLoc = glGetUniformLocation(p1.getProgramID(), "persp");
+    glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
+    glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
+
+    //upload camera info
+    mCamera.uploadCameraInfo();
+
+    //set modelTransform to unity as start
+    int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
+    glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
+
+    //upload light info
     mOmniLight.upload(p1.getProgramID());
 
 }
 
 void Window::render() {
-    //glClearColor(0, 0, 0.4*sin(SDL_GetTicks() / 1000.0) + 0.6,1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     mPlayer.render();

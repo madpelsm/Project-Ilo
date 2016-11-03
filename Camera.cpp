@@ -37,3 +37,13 @@ void Camera::uploadCameraInfo() {
 void Camera::update() {
     mCamera = glm::lookAt(mPosition, mTarget, mUp);
 }
+
+void Camera::rotate(float angle) {
+    glm::vec4 LookDirection = glm::vec4(mTarget - mPosition,0.0f);
+    //rotate around y axis
+    glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
+    glm::vec3 rotated = rotationMat*LookDirection; //discard the w comp;
+    //mPosition stays the same
+    mTarget = mPosition + rotated;
+
+}
