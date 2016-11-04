@@ -1,5 +1,4 @@
 #include "Window.h"
-
 int main(int argc, char * argv[]) {
     Window w(800, 600, "Project Ilo");
     //set camera

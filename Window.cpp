@@ -1,5 +1,6 @@
 #include "Window.h"
 
+#include <thread>
 Window::Window(){
     mWidth = 800;
     mHeight = 600;
@@ -57,6 +58,10 @@ void Window::init() {
 
 void Window::initAssets() {
     mPlayer.init();
+    //Player * playerPointer = &mPlayer;
+    //std::thread t1((playerPointer,"shapes/suzanne.obj"));
+    //mPlayer.loadGeometry("shapes/suzanne.obj");
+    t1.join();
 
 }
 
@@ -121,26 +126,30 @@ void Window::checkEvents() {
             std::cout << "key pressed: ";
             if (event.key.keysym.scancode == SDL_SCANCODE_A) {
                 std::cout << "left";
-                mCamera.mPosition.x -= mPlayer.xSpd;
-                mCamera.mTarget.x -= mPlayer.xSpd;
+                mCamera.movePerpendicularOnDir(-0.1f);
+                /*mCamera.mPosition.x -= mPlayer.xSpd;
+                mCamera.mTarget.x -= mPlayer.xSpd;*/
                 //mPlayer.mX -= mPlayer.xSpd;
             }
             else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
                 std::cout << "right";
-                mCamera.mTarget.x += mPlayer.xSpd;
-                mCamera.mPosition.x += mPlayer.xSpd;
+                mCamera.movePerpendicularOnDir(0.1f);
+                /*mCamera.mTarget.x += mPlayer.xSpd;
+                mCamera.mPosition.x += mPlayer.xSpd;*/
                 //mPlayer.mX += mPlayer.xSpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_W) {
                 std::cout << "up";
-                mCamera.mPosition.z -= mPlayer.ySpd;
-                mCamera.mTarget.z -= mPlayer.ySpd;
+                mCamera.moveWithDir(0.1f);
+                /*mCamera.mPosition.z -= mPlayer.ySpd;
+                mCamera.mTarget.z -= mPlayer.ySpd;*/
                 //mPlayer.mZ += mPlayer.ySpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_S) {
                 std::cout << "down";
-                mCamera.mPosition.z += mPlayer.ySpd;
-                mCamera.mTarget.z += mPlayer.ySpd;
+                mCamera.moveWithDir(-0.1f);
+                /*mCamera.mPosition.z += mPlayer.ySpd;
+                mCamera.mTarget.z += mPlayer.ySpd;*/
                 //mPlayer.mZ -= mPlayer.ySpd;
             }
             if (event.key.keysym.scancode == SDL_SCANCODE_Q) {

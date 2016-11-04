@@ -9,6 +9,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up,int shaderProg
     mTarget = target;
     mPosition = position;
     mShaderProgramID = shaderProgramID;
+    glm::vec4 LookDirection = glm::vec4(mTarget - mPosition, 0.0f);
+    mLookDir = normalize(LookDirection);
     update();
 }
 
@@ -40,10 +42,20 @@ void Camera::update() {
 
 void Camera::rotate(float angle) {
     glm::vec4 LookDirection = glm::vec4(mTarget - mPosition,0.0f);
+    mLookDir = normalize(LookDirection);
     //rotate around y axis
     glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
     glm::vec3 rotated = rotationMat*LookDirection; //discard the w comp;
     //mPosition stays the same
     mTarget = mPosition + rotated;
 
+}
+void Camera::moveWithDir(float spd) {
+    mPosition += spd*glm::vec3(mLookDir.x,0, mLookDir.z);
+    mTarget += spd*glm::vec3(mLookDir.x,0, mLookDir.z);
+}
+void Camera::movePerpendicularOnDir(float spd) {
+    //standard is move right
+    mPosition += spd*glm::vec3(-mLookDir.z,0, mLookDir.x);
+    mTarget += spd*glm::vec3(-mLookDir.z,0, mLookDir.x);
 }
