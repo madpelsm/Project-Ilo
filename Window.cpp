@@ -21,6 +21,7 @@ Window::~Window() {
 }
 void Window::sdlDie() {
     closed = true;
+    
     SDL_DestroyWindow(mSDLwindow);
     SDL_Quit();
 }

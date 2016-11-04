@@ -4,9 +4,9 @@
 #include <glad\glad.h>
 #include "Shader.h"
 #include "ShaderProgram.h"
-#include <glm.hpp>
-#include "glm\glm\gtc\matrix_transform.hpp"
-#include "glm\glm\gtc\type_ptr.hpp"
+#include <glm/glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 #include "Camera.h"
 #include "GameObject.h"
 #include "Player.h"

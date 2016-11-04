@@ -1,5 +1,5 @@
 #pragma once
-#include <glm.hpp>
+#include <glm/glm.hpp>
 struct Vertex {
     glm::vec3 Pos;
     glm::vec3 Col;

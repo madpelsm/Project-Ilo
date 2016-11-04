@@ -1,4 +1,18 @@
-﻿  main.cpp
+﻿  objLoader.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\objloader.cpp(25): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
 c:\users\mathias\documents\github\project ilo\project ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  Window.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(32): warning C4552: '-': operator has no effect; expected operator with side-effect
+c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(204): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  ShaderProgram.cpp
+  Shader.cpp
+  Player.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\player.cpp(71): warning C4018: '<': signed/unsigned mismatch
+c:\users\mathias\documents\github\project ilo\project ilo\player.cpp(72): warning C4018: '<': signed/unsigned mismatch
+  Light.cpp
+  Camera.cpp
+  Generating Code...
   Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.exe
   Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.pdb (Partial PDB)
