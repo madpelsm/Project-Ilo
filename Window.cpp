@@ -61,7 +61,6 @@ void Window::initAssets() {
     //Player * playerPointer = &mPlayer;
     //std::thread t1((playerPointer,"shapes/suzanne.obj"));
     //mPlayer.loadGeometry("shapes/suzanne.obj");
-    t1.join();
 
 }
 
