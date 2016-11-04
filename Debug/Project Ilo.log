@@ -1,6 +1,11 @@
-﻿  objLoader.cpp
-c:\users\mathi\documents\github\project-ilo\objloader.cpp(25): warning C4018: '<': signed/unsigned mismatch
-  glad.c
-  LINK : C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe not found or not built by the last incremental link; performing full link
+﻿  Window.cpp
+c:\users\mathi\documents\github\project-ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+c:\users\mathi\documents\github\project-ilo\window.cpp(34): warning C4552: '-': operator has no effect; expected operator with side-effect
+c:\users\mathi\documents\github\project-ilo\window.cpp(213): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  Generating Code...
+  Compiling...
+  main.cpp
+c:\users\mathi\documents\github\project-ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  Generating Code...
   Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe
   Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.pdb (Partial PDB)

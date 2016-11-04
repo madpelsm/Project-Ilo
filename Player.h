@@ -24,7 +24,7 @@ public:
     Player();
     ~Player();
     
-    void init();
+    void initGL();
     void setTransform(float x, float y, float angle);
     void setShape(std::vector<Vertex> vertices);
     void loadGeometry(std::string filePath);

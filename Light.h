@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <glad\glad.h>
+#include <glad/glad.h>
 
 class Light {
     glm::vec3 mPosition;

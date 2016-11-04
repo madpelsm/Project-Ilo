@@ -39,7 +39,7 @@ void Player::createIndices() {
         mIndices.push_back(i+1);
         mIndices.push_back(i+2);
     }
-
+    printf("created indices for player \n");
 }
 
 void Player::createNormals() {
@@ -98,7 +98,7 @@ void Player::refreshShaderTransforms() {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
 
-void Player::init() {
+void Player::initGL() {
     //test fill the offsetarray (contains offset vectors)
     fillOffsets();
 

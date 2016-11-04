@@ -53,15 +53,17 @@ void Window::init() {
     std::cout << "Window initialised correctly" << std::endl;
 
     initGL();
+}
 
+void Window::loadGeometries() {
+    std::string loc = "shapes/suzanne.obj";
+    std::thread t1(&Player::loadGeometry, &mPlayer, std::move(loc));
+    t1.join();
 }
 
 void Window::initAssets() {
-    mPlayer.init();
-    //Player * playerPointer = &mPlayer;
-    //std::thread t1((playerPointer,"shapes/suzanne.obj"));
-    //mPlayer.loadGeometry("shapes/suzanne.obj");
 
+    mPlayer.initGL();
 }
 
 void Window::initGL() {
@@ -113,6 +115,51 @@ void Window::run() {
 }
 
 void Window::checkEvents() {
+    SDL_PumpEvents();
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    //for multiple keyinputs at once
+    if (state[SDL_SCANCODE_A]) {
+            std::cout << "left"<<std::endl;
+            mCamera.movePerpendicularOnDir(-walkAroundSpeed);
+            /*mCamera.mPosition.x -= mPlayer.xSpd;
+            mCamera.mTarget.x -= mPlayer.xSpd;*/
+            //mPlayer.mX -= mPlayer.xSpd;
+        }
+    else if (state[SDL_SCANCODE_D]) {
+            std::cout << "right" << std::endl;
+            mCamera.movePerpendicularOnDir(walkAroundSpeed);
+            /*mCamera.mTarget.x += mPlayer.xSpd;
+            mCamera.mPosition.x += mPlayer.xSpd;*/
+            //mPlayer.mX += mPlayer.xSpd;
+        }
+    if (state[SDL_SCANCODE_W]) {
+            std::cout << "up" << std::endl;
+            mCamera.moveWithDir(walkAroundSpeed);
+            /*mCamera.mPosition.z -= mPlayer.ySpd;
+            mCamera.mTarget.z -= mPlayer.ySpd;*/
+            //mPlayer.mZ += mPlayer.ySpd;
+        }
+    if (state[SDL_SCANCODE_S]) {
+            std::cout << "down" << std::endl;
+            mCamera.moveWithDir(-walkAroundSpeed);
+            /*mCamera.mPosition.z += mPlayer.ySpd;
+            mCamera.mTarget.z += mPlayer.ySpd;*/
+            //mPlayer.mZ -= mPlayer.ySpd;
+        }
+    if (state [SDL_SCANCODE_Q]) {
+            std::cout << "down" << std::endl;
+            mCamera.rotate(rotateSpeed);
+            //mPlayer.mZ -= mPlayer.ySpd;
+        }
+    if (state[SDL_SCANCODE_E]) {
+            std::cout << "down" << std::endl;
+            mCamera.rotate(-rotateSpeed);
+            //mPlayer.mZ -= mPlayer.ySpd;
+        }
+    if (state[SDL_SCANCODE_ESCAPE]) {
+            std::cout << "Closing" << std::endl;
+            sdlDie();
+        }
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             sdlDie();
@@ -120,53 +167,6 @@ void Window::checkEvents() {
         if (event.type == SDL_WINDOWEVENT_RESIZED) {
             std::cout << "resized!" << std::endl;
             resize();
-        }
-        if (event.type == SDL_KEYDOWN){
-            std::cout << "key pressed: ";
-            if (event.key.keysym.scancode == SDL_SCANCODE_A) {
-                std::cout << "left";
-                mCamera.movePerpendicularOnDir(-0.1f);
-                /*mCamera.mPosition.x -= mPlayer.xSpd;
-                mCamera.mTarget.x -= mPlayer.xSpd;*/
-                //mPlayer.mX -= mPlayer.xSpd;
-            }
-            else if (event.key.keysym.scancode == SDL_SCANCODE_D) {
-                std::cout << "right";
-                mCamera.movePerpendicularOnDir(0.1f);
-                /*mCamera.mTarget.x += mPlayer.xSpd;
-                mCamera.mPosition.x += mPlayer.xSpd;*/
-                //mPlayer.mX += mPlayer.xSpd;
-            }
-            if (event.key.keysym.scancode == SDL_SCANCODE_W) {
-                std::cout << "up";
-                mCamera.moveWithDir(0.1f);
-                /*mCamera.mPosition.z -= mPlayer.ySpd;
-                mCamera.mTarget.z -= mPlayer.ySpd;*/
-                //mPlayer.mZ += mPlayer.ySpd;
-            }
-            if (event.key.keysym.scancode == SDL_SCANCODE_S) {
-                std::cout << "down";
-                mCamera.moveWithDir(-0.1f);
-                /*mCamera.mPosition.z += mPlayer.ySpd;
-                mCamera.mTarget.z += mPlayer.ySpd;*/
-                //mPlayer.mZ -= mPlayer.ySpd;
-            }
-            if (event.key.keysym.scancode == SDL_SCANCODE_Q) {
-                std::cout << "down";
-                mCamera.rotate(0.01f);
-                //mPlayer.mZ -= mPlayer.ySpd;
-            }
-            if (event.key.keysym.scancode == SDL_SCANCODE_E) {
-                std::cout << "down";
-                mCamera.rotate(-0.01f);
-                //mPlayer.mZ -= mPlayer.ySpd;
-            }
-            if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-                std::cout << "Closing";
-                sdlDie();
-            }
-
-            std::cout<<"."<<std::endl;
         }
     }
 }

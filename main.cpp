@@ -7,10 +7,11 @@ int main(int argc, char * argv[]) {
     //set player and init him
     Player p1;
     w.setPlayer(p1);
-    w.mPlayer.loadGeometry("shapes/suzanne.obj");
+    //w.mPlayer.loadGeometry("shapes/suzanne.obj");
     //set camera
     Light OmniLight(glm::vec3(0, 2, 2),0,glm::vec3(1,1,1));
     w.setLight(OmniLight);
+    w.loadGeometries();
     w.initAssets();
     w.run();
     return 0;
