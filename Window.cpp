@@ -48,7 +48,7 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     //vsync
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 

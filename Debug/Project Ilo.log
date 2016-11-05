@@ -1,7 +1,22 @@
-﻿  Window.cpp
-c:\users\mathi\documents\github\project-ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
-c:\users\mathi\documents\github\project-ilo\window.cpp(34): warning C4552: '-': operator has no effect; expected operator with side-effect
-c:\users\mathi\documents\github\project-ilo\window.cpp(202): warning C4018: '<': signed/unsigned mismatch
-c:\users\mathi\documents\github\project-ilo\window.cpp(215): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
-  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe
-  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.pdb (Partial PDB)
+﻿  tiny_obj_loader.cc
+  objLoader.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\objloader.cpp(25): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  Window.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(34): warning C4552: '-': operator has no effect; expected operator with side-effect
+c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(202): warning C4018: '<': signed/unsigned mismatch
+c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(215): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  ShaderProgram.cpp
+  Shader.cpp
+  Player.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\player.cpp(71): warning C4018: '<': signed/unsigned mismatch
+c:\users\mathias\documents\github\project ilo\project ilo\player.cpp(72): warning C4018: '<': signed/unsigned mismatch
+  Light.cpp
+  Camera.cpp
+  Generating Code...
+  glad.c
+  LINK : C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.exe not found or not built by the last incremental link; performing full link
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.exe
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.pdb (Partial PDB)
