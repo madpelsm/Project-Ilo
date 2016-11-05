@@ -1,16 +1,9 @@
-﻿  Camera.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Camera.h(2): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
-  Light.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Light.h(2): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
-  main.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Window.h(2): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
-  objLoader.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Vertex.h(2): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
-  Player.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Vertex.h(2): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
-  Shader.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\glad\include\glad\glad.h(639): fatal error C1083: Cannot open include file: 'KHR/khrplatform.h': No such file or directory
-  ShaderProgram.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\ShaderProgram.h(2): fatal error C1083: Cannot open include file: 'glad\glad.h': No such file or directory
-  Window.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Window.h(2): fatal error C1083: Cannot open include file: 'SDL.h': No such file or directory
+﻿  main.cpp
+c:\users\mathias\documents\github\project ilo\project ilo\Window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+  Generating code
+  1 of 2679 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Release\Project Ilo.exe
+  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Release\Project Ilo.pdb (Full PDB)

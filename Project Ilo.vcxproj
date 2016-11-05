@@ -70,11 +70,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>C:\Users\mathi\Documents\GitHub\Project-Ilo\SDL2-2.0.4\lib\x86;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\mathi\Documents\GitHub\Project-Ilo\glm;C:\Users\mathi\Documents\GitHub\Project-Ilo\SDL2-2.0.4\include;C:\Users\mathi\Documents\GitHub\Project-Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;C:\Users\mathi\Documents\GitHub\Project-Ilo\SDL2-2.0.4\lib\x86;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glad\include;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\glm;C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\SDL2-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -102,7 +110,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -110,12 +118,14 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -123,6 +133,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

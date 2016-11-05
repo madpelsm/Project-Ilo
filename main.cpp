@@ -10,7 +10,7 @@ int main(int argc, char * argv[]) {
 
     //create lights and add them to the window
     //the first light created will be bound on the camera's position
-    Light OmniLight(glm::vec3(0, 2, 2), 0, glm::vec3(0.5,0.5,0.5));
+    Light OmniLight(glm::vec3(0, 2, 2), 0, glm::vec3(1,1,1));
     w.setLight(OmniLight); 
     //orange light
     Light OmniLight2(glm::vec3(0, 2, 2), 0, glm::vec3(1, 0.6, 0.2));
@@ -19,7 +19,7 @@ int main(int argc, char * argv[]) {
     Light OmniLight3(glm::vec3(6, 2, 2), 0, glm::vec3(0.6, 0.3, 0.9));
     w.setLight(OmniLight3);
     //blue light
-    Light OmniLight4(glm::vec3(-6, 2, 2), 0, glm::vec3(0.3, 0.3, 1));
+    Light OmniLight4(glm::vec3(-8, 2, 2), 0, glm::vec3(0.3, 0.3, 1));
     w.setLight(OmniLight4);
     //green light
     Light OmniLight5(glm::vec3(-6, 2, -6), 0, glm::vec3(0.3, 1, 0.3));
