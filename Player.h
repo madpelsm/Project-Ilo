@@ -12,7 +12,7 @@ private:
     /*Shader vertShader, fragShader;
     ShaderProgram p1;*/
     GLuint shaderProgramID;
-    int instances = 10;
+    int instances = 5;
     std::vector<glm::vec3> mOffsets;
 
 public:

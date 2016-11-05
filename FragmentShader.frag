@@ -17,8 +17,7 @@ in VS_OUT {
 } vs_in;
 
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight);
-#define Amount_omniLights 1
-
+#define Amount_omniLights 7
 
 
 

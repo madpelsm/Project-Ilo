@@ -30,7 +30,8 @@ public:
     Shader vertShader, fragShader,geometryShader;
     std::vector<GameObject> mGameObjects;
     Player mPlayer;
-    Light mOmniLight;
+    Light mOmniLight,mOmniLight2;
+    std::vector <Light> mOmniLights;
 
 
     Window();

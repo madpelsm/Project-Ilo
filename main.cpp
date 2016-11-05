@@ -7,10 +7,32 @@ int main(int argc, char * argv[]) {
     //set player and init him
     Player p1;
     w.setPlayer(p1);
-    //w.mPlayer.loadGeometry("shapes/suzanne.obj");
-    //set camera
-    Light OmniLight(glm::vec3(0, 2, 2),0,glm::vec3(1,1,1));
-    w.setLight(OmniLight);
+
+    //create lights and add them to the window
+    //the first light created will be bound on the camera's position
+    Light OmniLight(glm::vec3(0, 2, 2), 0, glm::vec3(0.5,0.5,0.5));
+    w.setLight(OmniLight); 
+    //orange light
+    Light OmniLight2(glm::vec3(0, 2, 2), 0, glm::vec3(1, 0.6, 0.2));
+    w.setLight(OmniLight2);
+    //purple light
+    Light OmniLight3(glm::vec3(6, 2, 2), 0, glm::vec3(0.6, 0.3, 0.9));
+    w.setLight(OmniLight3);
+    //blue light
+    Light OmniLight4(glm::vec3(-6, 2, 2), 0, glm::vec3(0.3, 0.3, 1));
+    w.setLight(OmniLight4);
+    //green light
+    Light OmniLight5(glm::vec3(-6, 2, -6), 0, glm::vec3(0.3, 1, 0.3));
+    w.setLight(OmniLight5);
+    //yellow light
+    Light OmniLight6(glm::vec3(6, 2, -6), 0, glm::vec3(1, 1, 0.3));
+    w.setLight(OmniLight6);
+    //red
+    Light OmniLight7(glm::vec3(0, 2, -6), 0, glm::vec3(1, .2, 0.2));
+    w.setLight(OmniLight7);
+    //dont forget to set Amount_omniLights in the fragShader
+
+
     w.loadGeometries();
     w.initAssets();
     w.run();

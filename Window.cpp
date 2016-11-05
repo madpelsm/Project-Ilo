@@ -47,8 +47,8 @@ void Window::init() {
         std::cout << "failed to create Window" << std::endl;
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
-
-    SDL_GL_SetSwapInterval(1);
+    //vsync
+    SDL_GL_SetSwapInterval(0);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -178,7 +178,7 @@ void Window::update() {
     mCamera.update();
     mPlayer.update();
     //you can put lightmovements here 
-    mOmniLight.move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
+    mOmniLights[0].move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
     //update gameobjects
     //box2d! pass a world
 
@@ -199,7 +199,9 @@ void Window::upload() {
     glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
 
     //upload light info
-    mOmniLight.upload(p1.getProgramID());
+    for (auto i = 0; i < mOmniLights.size(); i++) {
+        mOmniLights[i].upload(p1.getProgramID());
+    }
 
 }
 
@@ -241,5 +243,5 @@ void Window::setPlayer(Player p) {
 }
 
 void Window::setLight(Light light) {
-    mOmniLight = light;
+    mOmniLights.push_back(light);
 }
