@@ -164,8 +164,12 @@
   <ItemGroup>
     <None Include="cmake\Modules\FindGLM.cmake" />
     <None Include="cmake\Modules\FindSDL2.cmake" />
+    <None Include="firstPassFragment.frag" />
+    <None Include="firstPassVertex.vert" />
     <None Include="FragmentShader.frag" />
     <None Include="geometryShader.geom" />
+    <None Include="secondPassFrag.frag" />
+    <None Include="secondPassVert.vert" />
     <None Include="VertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -82,7 +82,7 @@ void Player::update() {
    
 }
 
-void Player::render() {
+void Player::render(int shaderProgramID) {
     //set transform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
 
@@ -90,10 +90,10 @@ void Player::render() {
 
     glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size() , GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
     //glDrawElements(GL_TRIANGLES,mIndices.size(), GL_UNSIGNED_INT, &mIndices[0]);
-    refreshShaderTransforms();
+    refreshShaderTransforms(shaderProgramID);
 }
 
-void Player::refreshShaderTransforms() {
+void Player::refreshShaderTransforms(int shaderProgramID) {
     //revert too unity as model matrix, ie no transforms
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
@@ -142,4 +142,9 @@ void Player::initGL() {
     std::cout << "drawing " << mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 
+}
+void Player::cleanup() {
+    glDeleteVertexArrays(1, &mVaoPlayer);
+    glDeleteBuffers(1, &mVbo);
+    glDeleteBuffers(1, &mInstanceVBO);
 }

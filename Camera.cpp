@@ -4,11 +4,10 @@
 Camera::Camera() {
 }
 
-Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up,int shaderProgramID) {
+Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
     mUp = up;
     mTarget = target;
     mPosition = position;
-    mShaderProgramID = shaderProgramID;
     glm::vec3 LookDirection = mTarget - mPosition;
     mLookDir = normalize(LookDirection);
     update();
@@ -31,10 +30,13 @@ void Camera::move(glm::vec3 target) {
     update();
 }
 
-void Camera::uploadCameraInfo() {
-    int camLocation = glGetUniformLocation(mShaderProgramID, "cam");
-    glProgramUniformMatrix4fv(mShaderProgramID, camLocation, 1, GL_FALSE, glm::value_ptr(mCamera));
-    glUniform3f(glGetUniformLocation(mShaderProgramID, "eyePos"), mPosition.x, mPosition.y, mPosition.z);
+void Camera::uploadCameraInfo(int shaderProgramID) {
+    int camLocation = glGetUniformLocation(shaderProgramID, "cam");
+    glProgramUniformMatrix4fv(shaderProgramID, camLocation, 1, GL_FALSE, glm::value_ptr(mCamera));
+}
+
+void Camera::setViewPos(int shaderProgramID) {
+    glUniform3f(glGetUniformLocation(shaderProgramID, "eyePos"), mPosition.x, mPosition.y, mPosition.z);
 }
 void Camera::update() {
     mCamera = glm::lookAt(mPosition, mTarget, mUp);

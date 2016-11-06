@@ -16,13 +16,21 @@ Window::Window(int width, int height, std::string title) {
 }
 
 Window::~Window() {
-
-    p1.deleteProgram();
     sdlDie();
 }
 void Window::sdlDie() {
     closed = true;
-    
+    std::cout << "killing SDL" << std::endl;
+    mPlayer.cleanup();
+    secondPassShader.deleteProgram();
+    firstPassShader.deleteProgram();
+    glDeleteFramebuffers(1, &gbuffer);
+    glDeleteTextures(1, &gPosition);
+    glDeleteTextures(1, &gNormal);
+    glDeleteTextures(1, &gMaterialColor);
+    glDeleteTextures(1, &gMaterialProps);
+    glDeleteVertexArrays(1, &quadVao);
+    glDeleteRenderbuffers(1, &rboDepth);
     SDL_DestroyWindow(mSDLwindow);
     SDL_Quit();
 }
@@ -53,6 +61,7 @@ void Window::init() {
     std::cout << "Window initialised correctly" << std::endl;
 
     initGL();
+    initQuadMesh();
 }
 
 void Window::loadGeometries() {
@@ -83,22 +92,116 @@ void Window::initGL() {
 
 
     //load in shaders
-    vertShader.loadShader("VertexShader.vert", GL_VERTEX_SHADER);
-    fragShader.loadShader("FragmentShader.frag", GL_FRAGMENT_SHADER);
-    //geometryShader.loadShader("geometryShader.geom", GL_GEOMETRY_SHADER);
-    // add in later, a simple pass through geometry shader (can be useful later on)
-    //create attach link use
-    p1.createProgram();
-    p1.attachShaderToProgram(&vertShader);
-    //p1.attachShaderToProgram(&geometryShader);
-    p1.attachShaderToProgram(&fragShader);
-    p1.linkProgram();
-    p1.useProgram();
-    std::cout << "OpenGL window initialised" << std::endl;
+    //vertShader.loadShader("VertexShader.vert", GL_VERTEX_SHADER);
+    //fragShader.loadShader("FragmentShader.frag", GL_FRAGMENT_SHADER);
+    ////create attach link use
+    //p1.createProgram();
+    //p1.attachShaderToProgram(&vertShader);
+    ////p1.attachShaderToProgram(&geometryShader);
+    //p1.attachShaderToProgram(&fragShader);
+    //p1.linkProgram();
+    //p1.useProgram();
+    
+    //first pass shader creation
+    firstPassVertShader.loadShader("firstPassVertex.vert", GL_VERTEX_SHADER);
+    firstPassFragShader.loadShader("firstPassFragment.frag", GL_FRAGMENT_SHADER);
+    firstPassShader.createProgram();
+    firstPassShader.attachShaderToProgram(&firstPassVertShader);
+    firstPassShader.attachShaderToProgram(&firstPassFragShader);
+    firstPassShader.linkProgram();
+    firstPassShader.useProgram();
+
+    secondPassVertShader.loadShader("secondPassVert.vert", GL_VERTEX_SHADER);
+    secondPassFragShader.loadShader("secondPassFrag.frag", GL_FRAGMENT_SHADER);
+
+    secondPassShader.createProgram();
+    secondPassShader.attachShaderToProgram(&secondPassVertShader);
+    secondPassShader.attachShaderToProgram(&secondPassFragShader);
+    secondPassShader.linkProgram();
+
+    secondPassShader.useProgram();
     destroyShaders();
+
+    glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gPosition"), 0);
+    glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gNormal"), 1);
+    glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlColor"), 2);
+    glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlProp"), 3);
+
+    std::cout << "OpenGL window initialised" << std::endl;
     //clear the buffer before first render, it looks nicer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     SDL_GL_SwapWindow(mSDLwindow);
+
+    glGenFramebuffers(1, &gbuffer);
+    glGenRenderbuffers(1, &rboDepth);
+    //generate texturebuffer only once, otherwise mem leak
+    glGenTextures(1, &gPosition);
+    glGenTextures(1, &gNormal);
+    glGenTextures(1, &gMaterialColor);
+    glGenTextures(1, &gMaterialProps);
+
+    glBindFramebuffer(GL_FRAMEBUFFER,gbuffer);
+    //position
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+    //normals
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8_SNORM, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+    //materialColor
+    glBindTexture(GL_TEXTURE_2D, gMaterialColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gMaterialColor, 0);
+    //materialProps
+    glBindTexture(GL_TEXTURE_2D, gMaterialProps);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMaterialProps, 0);
+
+    //draw to the textures
+    glDrawBuffers(4, attachments);
+    //bind the depthbuffer
+
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Framebuffer not complete!" << std::endl;
+    }
+    else {
+        std::cout << "framebuffer Complete" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Window::initQuadMesh() {
+        GLfloat quadVertices[] = {
+            // Positions        // Texture Coords
+            -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // Setup plane VAO
+        glGenVertexArrays(1, &quadVao);
+        glGenBuffers(1, &quadVao);
+        glBindVertexArray(quadVao);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVao);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+
+        glBindVertexArray(0);
 }
 
 void Window::run() {
@@ -174,7 +277,7 @@ void Window::checkEvents() {
 void Window::update() {
     resize();
 
-    //prepare the transformations
+    //prepare the transformations 
     mCamera.update();
     mPlayer.update();
     //you can put lightmovements here 
@@ -187,38 +290,81 @@ void Window::update() {
 void Window::upload() {
     //upload global values here, transformations of an object needs to happen within its ownd draw method
     //upload perspective info
-    int perspLoc = glGetUniformLocation(p1.getProgramID(), "persp");
+    firstPassShader.useProgram();
+    int perspLoc = glGetUniformLocation(firstPassShader.getProgramID(), "persp");
     glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
-    glProgramUniformMatrix4fv(p1.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
-
-    //upload camera info
-    mCamera.uploadCameraInfo();
+    glProgramUniformMatrix4fv(firstPassShader.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     //set modelTransform to unity as start
-    int modelLoc = glGetUniformLocation(p1.getProgramID(), "model");
-    glProgramUniformMatrix4fv(p1.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
+    int modelLoc = glGetUniformLocation(firstPassShader.getProgramID(), "model");
+    glProgramUniformMatrix4fv(firstPassShader.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
 
-    //upload light info
+    //upload camera info
+    mCamera.uploadCameraInfo(firstPassShader.getProgramID());
+
+    secondPassShader.useProgram();
     for (auto i = 0; i < mOmniLights.size(); i++) {
-        mOmniLights[i].upload(p1.getProgramID());
+        mOmniLights[i].upload(secondPassShader.getProgramID());
     }
+}
+
+void Window::renderFirstPass() {
+    //set the shaderProgram
+
+    glBindFramebuffer(GL_FRAMEBUFFER, gbuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glDrawBuffers(4, attachments);
+    firstPassShader.useProgram();
+    mPlayer.render(firstPassShader.getProgramID());
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void Window::renderSecondPass() {
+    glDisable(GL_CULL_FACE);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    secondPassShader.useProgram();
+    mCamera.setViewPos(secondPassShader.getProgramID());
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, gMaterialColor);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, gMaterialProps);
+
+    //light stuff
+    //upload light info
+    
+    drawQuad();
+}
+
+void Window::drawQuad() {
+    
+    glBindVertexArray(quadVao);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
 
 }
 
 void Window::render() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //DEFERRED SHADING
     //first pass: pass position, normals, material Color, spec and ambient info in textures
     //Position: position
     //Normal : normal
     //MaterialColor: material Color (R,G,B)
     //MaterialProps: MaterialProps.x = Shininess, MaterialProps.y = specStrenght, MaterialProps.z = ambient amount
-
     //first pass: create the textures
-
+    
+    //enable the framebuffer before rendering the first pass
+    
+    renderFirstPass();
     //second pass: render with the textures
+    renderSecondPass();
 
-    mPlayer.render();
+    
 
 
     SDL_GL_SwapWindow(mSDLwindow);
@@ -237,7 +383,11 @@ void Window::resize() {
 }
 
 void Window::destroyShaders(){
-
+    firstPassVertShader.deleteShader();
+    firstPassFragShader.deleteShader();
+    secondPassFragShader.deleteShader();
+    secondPassVertShader.deleteShader();
+    
     vertShader.deleteShader();
     fragShader.deleteShader();
 }

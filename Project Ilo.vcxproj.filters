@@ -94,5 +94,17 @@
     <None Include="cmake\Modules\FindSDL2.cmake">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="firstPassFragment.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="firstPassVertex.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="secondPassFrag.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="secondPassVert.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

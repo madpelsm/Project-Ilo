@@ -35,10 +35,10 @@ Light::~Light() {
 void Light::upload(int ShaderProgramID) {
     std::string posString = "omniLights[" + std::to_string(lightID) + "].position";
     std::string lightColorString = "omniLights[" + std::to_string(lightID) + "].lightColor";
-    std::string ambString = "omniLights[" + std::to_string(lightID) + "].ambient";
+    //std::string ambString = "omniLights[" + std::to_string(lightID) + "].ambient";
     glUniform3f(glGetUniformLocation(ShaderProgramID, posString.c_str()), mPosition.x, mPosition.y, mPosition.z);
     glUniform3f(glGetUniformLocation(ShaderProgramID, lightColorString.c_str()), mColor.x, mColor.y, mColor.z);
-    glUniform1f(glGetUniformLocation(ShaderProgramID, ambString.c_str()), mAmbientComp);
+   // glUniform1f(glGetUniformLocation(ShaderProgramID, ambString.c_str()), mAmbientComp);
 }
 
 void Light::move(float dx, float dy,float dz) {

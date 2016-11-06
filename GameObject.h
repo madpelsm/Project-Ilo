@@ -8,5 +8,5 @@
 #include <glm/gtc/type_ptr.hpp>
 class GameObject {
 public:
-    virtual void render()=0;
+    virtual void render(int shaderProgram)=0;
 };
