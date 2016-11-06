@@ -3,7 +3,7 @@ int main(int argc, char * argv[]) {
     Window w(800, 600, "Project Ilo");
     //set camera
     //Position, then target then define the up direction (+Y = Up)
-    Camera c1(glm::vec3(0,5,6),glm::vec3(0,2,0),glm::vec3(0,1,0));
+    Camera c1(glm::vec3(0,4,6),glm::vec3(0,2,0),glm::vec3(0,1,0));
     w.setCamera(c1);
     //set player and init him
     Player p1;

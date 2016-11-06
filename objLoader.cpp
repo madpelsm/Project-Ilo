@@ -45,7 +45,7 @@ objectLoader::objectLoader(std::string _inputFile) {
                     float ambientAmount_temp = materials[shapes[s].mesh.material_ids[f]].ambient[0];
                     //temporary fix: just select the right ambient amount in Blender or equivalent
                     //recommended is ambient 0
-                    ambientAmount = (0.1f > ambientAmount_temp) ? ambientAmount_temp : 0.1f;
+                    ambientAmount = (0.0f > ambientAmount_temp) ? ambientAmount_temp : 0.0f;
                     float shiny_temp = materials[shapes[s].mesh.material_ids[f]].shininess;
                     shininess = (1.0f<shiny_temp)?shiny_temp:1.0f;
                 }
