@@ -45,7 +45,7 @@ void Camera::rotate(float angle) {
     mLookDir = normalize(LookDirection);
     //rotate around y axis
     glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
-    glm::vec3 rotated = rotationMat*LookDirection; //discard the w comp;
+    glm::vec3 rotated = glm::vec3(rotationMat*LookDirection); //discard the w comp;
     //mPosition stays the same
     mTarget = mPosition + rotated;
 
