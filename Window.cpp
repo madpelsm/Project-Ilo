@@ -160,7 +160,7 @@ void Window::prepareForDeferredShading() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
     //materialColor
     glBindTexture(GL_TEXTURE_2D, gMaterialColor);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gMaterialColor, 0);
@@ -295,7 +295,7 @@ void Window::upload() {
     //upload perspective info
     firstPassShader.useProgram();
     int perspLoc = glGetUniformLocation(firstPassShader.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(1.54f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
+    glm::mat4 perspM = glm::perspective(1.4f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
     glProgramUniformMatrix4fv(firstPassShader.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     //set modelTransform to unity as start

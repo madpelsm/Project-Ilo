@@ -21,16 +21,19 @@ out vec4 FragColor;
 
 void main()
 {
-	vec3 lightedColor=vec3(0,0,0);
+	vec3 lightedSurface=vec3(0,0,0);
 	vec3 FragPos = texture(gPosition,TexCoords).rgb;
 	vec3 outNormal = texture(gNormal,TexCoords).rgb;
 	vec3 color = texture(gMtlColor,TexCoords).rgb;
 
 	for(int i=0;i<Amount_omniLights;i++){
-		lightedColor+= calculateLightColor(FragPos,outNormal,omniLights[i])*color;
+		lightedSurface+= calculateLightColor(FragPos,outNormal,omniLights[i])*color;
 	}
 
-	FragColor = vec4(pow(lightedColor,vec3(0.4545) ), 1.0);
+	
+	
+	FragColor = vec4(pow(lightedSurface,vec3(0.4545) ), 1.0);
+
 }
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 	//set specular amount
