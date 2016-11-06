@@ -22,6 +22,6 @@ void main()
 {
 	gl_Position=persp*cam*model*vec4(inPosition+instanceOffset,1.0);
 	vs_out.outNormal = mat3(transpose(inverse(model)))*inNormal;
-	vs_out.color = inColor;
+	vs_out.color = inPosition;
 	vs_out.FragPos = vec3(model*vec4(inPosition+instanceOffset,1.0f));
 }

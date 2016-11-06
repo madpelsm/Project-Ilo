@@ -207,7 +207,17 @@ void Window::upload() {
 
 void Window::render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+    //DEFERRED SHADING
+    //first pass: pass position, normals, material Color, spec and ambient info in textures
+    //Position: position
+    //Normal : normal
+    //MaterialColor: material Color (R,G,B)
+    //MaterialProps: MaterialProps.x = Shininess, MaterialProps.y = specStrenght, MaterialProps.z = ambient amount
+
+    //first pass: create the textures
+
+    //second pass: render with the textures
+
     mPlayer.render();
 
 
