@@ -13,9 +13,11 @@ struct Vertex2 {
     glm::vec3 Pos;
     glm::vec3 Col;
     glm::vec3 Norm;
-    Vertex2(Vertex v, glm::vec3 Norm){
+    glm::vec3 Material; //shininess, specularStrength, ambient
+    Vertex2(Vertex v, glm::vec3 Norm, glm::vec3 Material){
         this->Pos = v.Pos;
         this->Col = v.Col;
         this->Norm = Norm;
+        this->Material = Material;
     }
 };

@@ -166,8 +166,6 @@
     <None Include="cmake\Modules\FindSDL2.cmake" />
     <None Include="FragmentShader.frag" />
     <None Include="geometryShader.geom" />
-    <None Include="PlayerFragShader.frag" />
-    <None Include="PlayerVertexShader.vert" />
     <None Include="VertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

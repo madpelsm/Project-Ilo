@@ -36,17 +36,19 @@ objectLoader::objectLoader(std::string _inputFile) {
                 float nz = attrib.normals[3 * idx.normal_index + 2];
                 /*float tx = attrib.texcoords[2 * idx.texcoord_index + 0];
                 float ty = attrib.texcoords[2 * idx.texcoord_index + 1];*/
-                float c1 = 1, c2 = 1, c3 = 1;
+                float c1 = 1, c2 = 1, c3 = 1, shininess = 32.0f, specStrength = 1.0f, ambientAmount = 0;
                 if (f < shapes[s].mesh.material_ids.size()&& shapes[s].mesh.material_ids.size()>=0) {
                     c1 = materials[shapes[s].mesh.material_ids[f]].diffuse[0];
                     c2 = materials[shapes[s].mesh.material_ids[f]].diffuse[1];
                     c3 = materials[shapes[s].mesh.material_ids[f]].diffuse[2];
+                    specStrength = materials[shapes[s].mesh.material_ids[f]].specular[0];
+                    ambientAmount = materials[shapes[s].mesh.material_ids[f]].ambient[0];
+                    shininess = materials[shapes[s].mesh.material_ids[f]].shininess;
                 }
                 mVertices.push_back(Vertex2(
-                    Vertex(
-                        glm::vec3(vx,vy,vz),
-                        glm::vec3(c1,c2,c3)),
-                    glm::vec3(-nx,-ny,-nz)));
+                    Vertex(glm::vec3(vx, vy, vz), glm::vec3(c1, c2, c3)),
+                    glm::vec3(-nx, -ny, -nz),
+                    glm::vec3(shininess,specStrength,ambientAmount)));
 
             }
 

@@ -14,6 +14,7 @@ in VS_OUT {
 	vec3 outNormal;
 	vec3 FragPos;
 	vec3 color;
+	vec3 mtlProps;
 } vs_in;
 
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight);

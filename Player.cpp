@@ -29,7 +29,7 @@ void Player::setShape(std::vector<Vertex> vertices) {
     //pass in a vector with vertex info (pos and color) do this with origin at the center of the object
     mVertices = vertices;
     //create a new vector with all the normal information
-    createNormals();
+    //createNormals();
 
 }
 
@@ -53,9 +53,9 @@ void Player::createNormals() {
         glm::vec3 a = tempVertex3.Pos - tempVertex1.Pos;//from vert 1 to vert 2
         glm::vec3 b = tempVertex2.Pos - tempVertex1.Pos;//from vert1 to vert 3
         glm::vec3 normal = glm::normalize(glm::cross(a, b));
-        mVertices2.push_back(Vertex2(tempVertex1, normal));
-        mVertices2.push_back(Vertex2(tempVertex2, normal));
-        mVertices2.push_back(Vertex2(tempVertex3, normal));
+        mVertices2.push_back(Vertex2(tempVertex1, normal,glm::vec3(32,0.5f,0.0f)));
+        mVertices2.push_back(Vertex2(tempVertex2, normal, glm::vec3(32, 0.5f, 0.0f)));
+        mVertices2.push_back(Vertex2(tempVertex3, normal, glm::vec3(32, 0.5f, 0.0f)));
 
         
     }
@@ -124,11 +124,15 @@ void Player::initGL() {
     //Normals
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), (GLvoid *) (2*sizeof(glm::vec3)));
-    //instancing
+    //Materials
     glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2), (GLvoid *)(3 * sizeof(glm::vec3)));
+
+    //instancing
+    glEnableVertexAttribArray(4);
     glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
-    glVertexAttribDivisor(3, 1);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+    glVertexAttribDivisor(4, 1);
 
 
     ////indices 
