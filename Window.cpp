@@ -56,8 +56,8 @@ void Window::init() {
 }
 
 void Window::loadGeometries() {
-    std::string loc = "shapes/suzanne.obj";
-    std::thread t1(&Player::loadGeometry, &mPlayer, std::move(loc));
+    std::string Geomloc = "./shapes/untitled.obj";
+    std::thread t1(&Player::loadGeometry, &mPlayer, std::move(Geomloc));
     t1.join();
 }
 

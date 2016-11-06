@@ -1,9 +1,9 @@
 ﻿  main.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\Window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
+c:\users\mathi\documents\github\project-ilo\Window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
   Generating code
-  1 of 2679 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  1 of 2682 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Release\Project Ilo.exe
-  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Release\Project Ilo.pdb (Full PDB)
+  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Release\Project Ilo.exe
+  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Release\Project Ilo.pdb (Full PDB)

@@ -70,7 +70,7 @@ void Player::fillOffsets() {
     std::cout << "filling offsets"<<std::endl;
     for (unsigned int i = 0; i < instances; i++) {
         for (unsigned int j = 0; j < instances; j++) {
-            mOffsets.push_back(glm::vec3((5.0f)*j - (instances/2.0f)*5.0f, 0, (-8.0f)*i));
+            mOffsets.push_back(glm::vec3((14.0f)*j - (instances/2.0f)*15.0f, 0, (-11.0f)*i));
         }
     }
 

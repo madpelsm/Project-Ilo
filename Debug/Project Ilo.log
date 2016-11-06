@@ -1,7 +1,4 @@
-﻿  Window.cpp
-c:\users\mathias\documents\github\project ilo\project ilo\window.h(21): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
-c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(34): warning C4552: '-': operator has no effect; expected operator with side-effect
-c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(202): warning C4018: '<': signed/unsigned mismatch
-c:\users\mathias\documents\github\project ilo\project ilo\window.cpp(215): warning C4244: 'initializing': conversion from 'Uint32' to 'float', possible loss of data
-  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.exe
-  Project Ilo.vcxproj -> C:\Users\Mathias\Documents\GitHub\Project Ilo\Project Ilo\Debug\Project Ilo.pdb (Partial PDB)
+﻿  objLoader.cpp
+c:\users\mathi\documents\github\project-ilo\objloader.cpp(27): warning C4018: '<': signed/unsigned mismatch
+  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe
+  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.pdb (Partial PDB)

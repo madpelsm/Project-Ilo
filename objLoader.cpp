@@ -3,7 +3,9 @@
 objectLoader::objectLoader(std::string _inputFile) {
     filePath = _inputFile;
     std::cout << "Loading object: " << filePath << std::endl;
-    ret=tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filePath.c_str());
+    //mtlPath sets the path automaticly, but you have to keep the materials in the same folder as the mesh
+    std::string mtlPath = _inputFile.substr(0, _inputFile.find_last_of("/")+1);
+    ret=tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filePath.c_str(),mtlPath.c_str());
 
 
     if (!err.empty()) { // `err` may contain warning message.
@@ -20,7 +22,7 @@ objectLoader::objectLoader(std::string _inputFile) {
         size_t index_offset = 0;
         for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
             int fv = shapes[s].mesh.num_face_vertices[f];
-
+            
             // Loop over vertices in the face.
             for (size_t v = 0; v < fv; v++) {
                 // access to vertex
@@ -34,11 +36,16 @@ objectLoader::objectLoader(std::string _inputFile) {
                 float nz = attrib.normals[3 * idx.normal_index + 2];
                 /*float tx = attrib.texcoords[2 * idx.texcoord_index + 0];
                 float ty = attrib.texcoords[2 * idx.texcoord_index + 1];*/
-
+                float c1 = 1, c2 = 1, c3 = 1;
+                if (f < shapes[s].mesh.material_ids.size()&& shapes[s].mesh.material_ids.size()>=0) {
+                    c1 = materials[shapes[s].mesh.material_ids[f]].diffuse[0];
+                    c2 = materials[shapes[s].mesh.material_ids[f]].diffuse[1];
+                    c3 = materials[shapes[s].mesh.material_ids[f]].diffuse[2];
+                }
                 mVertices.push_back(Vertex2(
                     Vertex(
                         glm::vec3(vx,vy,vz),
-                        glm::vec3(1,1,1)),
+                        glm::vec3(c1,c2,c3)),
                     glm::vec3(-nx,-ny,-nz)));
 
             }
