@@ -42,8 +42,12 @@ objectLoader::objectLoader(std::string _inputFile) {
                     c2 = materials[shapes[s].mesh.material_ids[f]].diffuse[1];
                     c3 = materials[shapes[s].mesh.material_ids[f]].diffuse[2];
                     specStrength = materials[shapes[s].mesh.material_ids[f]].specular[0];
-                    ambientAmount = materials[shapes[s].mesh.material_ids[f]].ambient[0];
-                    shininess = materials[shapes[s].mesh.material_ids[f]].shininess;
+                    float ambientAmount_temp = materials[shapes[s].mesh.material_ids[f]].ambient[0];
+                    //temporary fix: just select the right ambient amount in Blender or equivalent
+                    //recommended is ambient 0
+                    ambientAmount = (0.1f > ambientAmount_temp) ? ambientAmount_temp : 0.1f;
+                    float shiny_temp = materials[shapes[s].mesh.material_ids[f]].shininess;
+                    shininess = (1.0f<shiny_temp)?shiny_temp:1.0f;
                 }
                 mVertices.push_back(Vertex2(
                     Vertex(glm::vec3(vx, vy, vz), glm::vec3(c1, c2, c3)),

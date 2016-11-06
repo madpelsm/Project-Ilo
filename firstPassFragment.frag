@@ -11,7 +11,7 @@ in vec3 gMtlProps;
 void main()
 {    
     // Store the fragment position vector in the first gbuffer texture
-    gPositionOut = gPosition/100.0f;
+    gPositionOut = gPosition;
     // store normal
     gNormalOut = gNormal;
     // store mtl color

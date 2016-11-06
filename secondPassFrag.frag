@@ -22,7 +22,7 @@ out vec4 FragColor;
 void main()
 {
 	vec3 lightedColor=vec3(0,0,0);
-	vec3 FragPos = texture(gPosition,TexCoords).rgb*100.0f;
+	vec3 FragPos = texture(gPosition,TexCoords).rgb;
 	vec3 outNormal = texture(gNormal,TexCoords).rgb;
 	vec3 color = texture(gMtlColor,TexCoords).rgb;
 
@@ -35,16 +35,16 @@ void main()
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){
 	//set specular amount
 	
-	vec3 lightDir = FragPos-omniLight.position;
+	vec3 lightDir = vec3(FragPos-omniLight.position);
 	vec3 viewDir = normalize(eyePos-FragPos);
-	vec3 reflectDir = reflect(lightDir,normal);
+	vec3 reflectDir = normalize(reflect(lightDir,normal));
 
 	//shininess and specStrength should become material dependend values
 	float shininess = texture(gMtlProp,TexCoords).r;
 	float specStrength = texture(gMtlProp,TexCoords).g;
 	float ambient = texture(gMtlProp,TexCoords).b;
 
-	float spec = pow(max(dot(viewDir, normalize(reflectDir)), 0.0), shininess);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
 
 	float specularBit = spec*specStrength;
 	

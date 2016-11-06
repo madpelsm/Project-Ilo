@@ -55,6 +55,7 @@ public:
     void loadGeometries();
     void initQuadMesh();
     void drawQuad();
+    void prepareForDeferredShading();
 
     void setCamera(Camera c);
     void setPlayer(Player p);

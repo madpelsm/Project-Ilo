@@ -61,6 +61,7 @@ void Window::init() {
     std::cout << "Window initialised correctly" << std::endl;
 
     initGL();
+    prepareForDeferredShading();
     initQuadMesh();
 }
 
@@ -132,6 +133,10 @@ void Window::initGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     SDL_GL_SwapWindow(mSDLwindow);
 
+    
+}
+
+void Window::prepareForDeferredShading() {
     glGenFramebuffers(1, &gbuffer);
     glGenRenderbuffers(1, &rboDepth);
     //generate texturebuffer only once, otherwise mem leak
@@ -140,7 +145,7 @@ void Window::initGL() {
     glGenTextures(1, &gMaterialColor);
     glGenTextures(1, &gMaterialProps);
 
-    glBindFramebuffer(GL_FRAMEBUFFER,gbuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, gbuffer);
     //position
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
@@ -161,7 +166,7 @@ void Window::initGL() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gMaterialColor, 0);
     //materialProps
     glBindTexture(GL_TEXTURE_2D, gMaterialProps);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMaterialProps, 0);
@@ -267,7 +272,7 @@ void Window::checkEvents() {
         if (event.type == SDL_QUIT) {
             sdlDie();
         }
-        if (event.type == SDL_WINDOWEVENT_RESIZED) {
+        if (event.type == SDL_WINDOWEVENT) {
             std::cout << "resized!" << std::endl;
             resize();
         }
@@ -275,8 +280,6 @@ void Window::checkEvents() {
 }
 
 void Window::update() {
-    resize();
-
     //prepare the transformations 
     mCamera.update();
     mPlayer.update();
@@ -292,7 +295,7 @@ void Window::upload() {
     //upload perspective info
     firstPassShader.useProgram();
     int perspLoc = glGetUniformLocation(firstPassShader.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(45.0f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
+    glm::mat4 perspM = glm::perspective(1.54f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
     glProgramUniformMatrix4fv(firstPassShader.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     //set modelTransform to unity as start
@@ -303,6 +306,7 @@ void Window::upload() {
     mCamera.uploadCameraInfo(firstPassShader.getProgramID());
 
     secondPassShader.useProgram();
+    mCamera.setViewPos(secondPassShader.getProgramID());
     for (auto i = 0; i < mOmniLights.size(); i++) {
         mOmniLights[i].upload(secondPassShader.getProgramID());
     }
@@ -325,7 +329,6 @@ void Window::renderSecondPass() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     secondPassShader.useProgram();
-    mCamera.setViewPos(secondPassShader.getProgramID());
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gPosition);
     glActiveTexture(GL_TEXTURE1);
@@ -359,7 +362,6 @@ void Window::render() {
     //first pass: create the textures
     
     //enable the framebuffer before rendering the first pass
-    
     renderFirstPass();
     //second pass: render with the textures
     renderSecondPass();
@@ -379,6 +381,7 @@ void Window::render() {
 
 void Window::resize() {
     SDL_GetWindowSize(mSDLwindow, &mWidth, &mHeight);
+    prepareForDeferredShading();
     glViewport(0, 0, mWidth, mHeight);
 }
 
