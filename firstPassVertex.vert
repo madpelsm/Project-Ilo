@@ -9,6 +9,7 @@ layout (location = 4) in vec3 instanceOffset;
 uniform mat4 persp;
 uniform mat4 model;
 uniform mat4 cam;
+//uniform float time;
 
 
 out vec3 gPosition;
@@ -21,7 +22,9 @@ out vec3 gMtlProps;
 
 void main(){
 	//define what you want to store vertex wise
-	vec4 worldPos=model*vec4(inPosition+instanceOffset,1.0);
+	vec3 instanceTranslation = instanceOffset;
+	vec3 vertPos = inPosition;
+	vec4 worldPos=model*vec4(vertPos+instanceTranslation,1.0);
 	gl_Position  = persp*cam*worldPos;
 	gPosition = worldPos.xyz;
 	gNormal = mat3(transpose(inverse(model)))*inNormal;;

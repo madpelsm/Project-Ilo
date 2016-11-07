@@ -267,12 +267,19 @@ void Window::checkEvents() {
             sdlDie();
         }
     while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
+        switch (event.type) {
+        case SDL_WINDOWEVENT:
+            switch (event.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+                resize();
+                std::cout << "resized" << std::endl;
+                break;
+            }
+            break;
+        case SDL_QUIT:
             sdlDie();
-        }
-        if (event.type == SDL_WINDOWEVENT) {
-            std::cout << "resized!" << std::endl;
-            resize();
+            break;
+
         }
     }
 }

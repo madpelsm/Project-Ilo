@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include <SDL.h>
 Player::Player() {
    
 }
@@ -85,7 +85,7 @@ void Player::update() {
 void Player::render(int shaderProgramID) {
     //set transform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
-
+    //glUniform1f(glGetUniformLocation(shaderProgramID, "time"), SDL_GetTicks()/1000.0f);
     glBindVertexArray(mVaoPlayer);
 
     glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size() , GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
