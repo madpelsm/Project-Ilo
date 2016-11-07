@@ -20,6 +20,7 @@ out vec3 gMtlProps;
 
 
 void main(){
+	//define what you want to store vertex wise
 	vec4 worldPos=model*vec4(inPosition+instanceOffset,1.0);
 	gl_Position  = persp*cam*worldPos;
 	gPosition = worldPos.xyz;

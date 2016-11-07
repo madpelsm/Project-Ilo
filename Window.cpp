@@ -45,8 +45,6 @@ void Window::init() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
     mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN
@@ -325,7 +323,7 @@ void Window::renderFirstPass() {
 }
 
 void Window::renderSecondPass() {
-    glDisable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     secondPassShader.useProgram();
@@ -381,6 +379,12 @@ void Window::render() {
 
 void Window::resize() {
     SDL_GetWindowSize(mSDLwindow, &mWidth, &mHeight);
+    //clean up previous buffers
+    glDeleteFramebuffers(1, &gbuffer);
+    glDeleteTextures(1, &gPosition);
+    glDeleteTextures(1, &gMaterialColor);
+    glDeleteTextures(1, &gMaterialProps);
+    glDeleteRenderbuffers(1, &rboDepth);
     prepareForDeferredShading();
     glViewport(0, 0, mWidth, mHeight);
 }

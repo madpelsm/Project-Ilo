@@ -4,7 +4,7 @@ Player::Player() {
    
 }
 Player::~Player() {
-
+    cleanup();
 }
 
 void Player::loadGeometry(std::string filePath) {

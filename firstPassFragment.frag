@@ -10,6 +10,8 @@ in vec3 gMaterialColor;
 in vec3 gMtlProps;
 void main()
 {    
+	//set the out values, set the gluniform1i for the out vec3's to the right 
+	// location (glUniform1i(...))
     // Store the fragment position vector in the first gbuffer texture
     gPositionOut = gPosition;
     // store normal
