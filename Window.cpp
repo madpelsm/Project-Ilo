@@ -21,9 +21,9 @@ Window::~Window() {
 void Window::sdlDie() {
     closed = true;
     std::cout << "killing SDL" << std::endl;
-    mPlayer.cleanup();
-    secondPassShader.deleteProgram();
-    firstPassShader.deleteProgram();
+    for (unsigned int i = 0; i < mGameObjects.size();i++) {
+        mGameObjects[i].cleanup();
+    }
     glDeleteFramebuffers(1, &gbuffer);
     glDeleteTextures(1, &gPosition);
     glDeleteTextures(1, &gNormal);
@@ -31,6 +31,9 @@ void Window::sdlDie() {
     glDeleteTextures(1, &gMaterialProps);
     glDeleteVertexArrays(1, &quadVao);
     glDeleteRenderbuffers(1, &rboDepth);
+
+    secondPassShader.deleteProgram();
+    firstPassShader.deleteProgram();
     SDL_DestroyWindow(mSDLwindow);
     SDL_Quit();
 }
@@ -45,6 +48,7 @@ void Window::init() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -57,7 +61,12 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     //vsync
-    SDL_GL_SetSwapInterval(1);
+    if (vSync) {
+        SDL_GL_SetSwapInterval(1);
+    }
+    else {
+        SDL_GL_SetSwapInterval(0);
+    }
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -66,15 +75,27 @@ void Window::init() {
     initQuadMesh();
 }
 
+void Window::setvSync(bool vSyncStatus) {
+    vSync = vSyncStatus;
+}
+
 void Window::loadGeometries() {
-    std::string Geomloc = "./shapes/untitled.obj";
-    std::thread t1(&Player::loadGeometry, &mPlayer, std::move(Geomloc));
-    t1.join();
+    std::vector<std::thread> loaders;
+    for (unsigned int i = 0; i < mGameObjects.size();i++) {
+        loaders.push_back(std::thread(&Player::loadDefaultGeometry, &mGameObjects[i]));
+    }
+
+    
+    for (unsigned int i = 0; i < loaders.size(); i++) {
+        loaders[i].join();
+    }
+    loaders.clear();
 }
 
 void Window::initAssets() {
-
-    mPlayer.initGL();
+    for (unsigned int i = 0; i < mGameObjects.size(); i++) {
+        mGameObjects[i].initGL();
+    }
 }
 
 void Window::initGL() {
@@ -301,7 +322,10 @@ void Window::checkEvents() {
 void Window::update() {
     //prepare the transformations 
     mCamera.update();
-    mPlayer.update();
+    //mPlayer.update();
+    for (unsigned int i = 0; i < mGameObjects.size(); i++) {
+        mGameObjects[i].update();
+    }
     //you can put lightmovements here 
     mOmniLights[0].move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
     //update gameobjects
@@ -319,7 +343,7 @@ void Window::upload() {
 
     //set modelTransform to unity as start
     int modelLoc = glGetUniformLocation(firstPassShader.getProgramID(), "model");
-    glProgramUniformMatrix4fv(firstPassShader.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(mPlayer.mTransformation));
+    glProgramUniformMatrix4fv(firstPassShader.getProgramID(), modelLoc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
     //upload camera info
     mCamera.uploadCameraInfo(firstPassShader.getProgramID());
@@ -338,7 +362,9 @@ void Window::renderFirstPass() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glDrawBuffers(4, attachments);
     firstPassShader.useProgram();
-    mPlayer.render(firstPassShader.getProgramID());
+    for (unsigned int i = 0; i < mGameObjects.size(); i++) {
+        mGameObjects[i].render(firstPassShader.getProgramID());
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
@@ -381,6 +407,7 @@ void Window::render() {
     //first pass: create the textures
     
     //enable the framebuffer before rendering the first pass
+    //render all objects in the first pass
     renderFirstPass();
     //second pass: render with the textures
     renderSecondPass();
@@ -426,10 +453,14 @@ void Window::setCamera(Camera c) {
 
 void Window::setPlayer(Player p) {
     //set the player for this game
-    mPlayer = p;
+    mGameObjects.push_back(p);
 
 }
 
 void Window::setLight(Light light) {
     mOmniLights.push_back(light);
+}
+
+void Window::addNPC(Player npc) {
+    this->mGameObjects.push_back(npc);
 }

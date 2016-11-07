@@ -17,10 +17,11 @@ void Player::loadGeometry(std::string filePath) {
     createIndices();
 }
 
-void Player::setTransform(float x, float y, float angle) {
+void Player::setTransform(float x, float y, float z, float angle) {
     //set the transformation info, then create the transformationMatrix
     mX = x;
     mY = y;
+    mZ = z;
     mRotAngle = angle;
 
 }
@@ -40,6 +41,10 @@ void Player::createIndices() {
         mIndices.push_back(i+2);
     }
     printf("created indices for player \n");
+}
+
+Player:: Player(std::string _geomPath) {
+    mGeomPath = _geomPath;
 }
 
 void Player::createNormals() {
@@ -68,9 +73,9 @@ glm::vec3 Player::getPosition() {
 void Player::fillOffsets() {
     //make only 3 instances
     std::cout << "filling offsets"<<std::endl;
-    for (unsigned int i = 0; i < instances; i++) {
-        for (unsigned int j = 0; j < instances; j++) {
-            mOffsets.push_back(glm::vec3((14.0f)*j - (instances/2.0f)*15.0f, 0, (-11.0f)*i));
+    for (unsigned int i = 0; i < mInstances; i++) {
+        for (unsigned int j = 0; j < mInstances; j++) {
+            mOffsets.push_back(glm::vec3((14.0f)*(j-(mInstances-1)/2.0f), 0, (-11.0f)*i));
         }
     }
 
@@ -78,7 +83,7 @@ void Player::fillOffsets() {
 
 void Player::update() {
 
-    mTransformation = glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1));
+    mTransformation = glm::mat4( glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1)));
    
 }
 
@@ -96,6 +101,10 @@ void Player::render(int shaderProgramID) {
 void Player::refreshShaderTransforms(int shaderProgramID) {
     //revert too unity as model matrix, ie no transforms
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+}
+
+void Player::setInstances(int amount) {
+    mInstances = amount;
 }
 
 void Player::initGL() {
@@ -142,6 +151,10 @@ void Player::initGL() {
     std::cout << "drawing " << mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 
+}
+
+void Player::loadDefaultGeometry() {
+    this->loadGeometry(mGeomPath);
 }
 void Player::cleanup() {
     glDeleteVertexArrays(1, &mVaoPlayer);

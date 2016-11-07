@@ -18,7 +18,7 @@ class Window {
     bool closed = false;
     bool windowInitialised = false;
     short frames;
-    
+    bool vSync = true;
     float lastTime = SDL_GetTicks()
         ,walkAroundSpeed = 0.09f //camera movement speed
         ,rotateSpeed = 0.01f; //camera rotation speed
@@ -29,13 +29,12 @@ public:
     SDL_GLContext glContext;
     SDL_Event event;
     Shader vertShader, fragShader,firstPassVertShader,firstPassFragShader, secondPassVertShader, secondPassFragShader;
-    std::vector<GameObject> mGameObjects;
-    Player mPlayer;
+    std::vector<Player> mGameObjects;
     Light mOmniLight,mOmniLight2;
     std::vector <Light> mOmniLights;
     GLuint gbuffer, gPosition, gNormal, gMaterialColor, gMaterialProps,rboDepth,quadVao;
     GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-
+    
     Window();
     Window(int width, int height, std::string title);
     ~Window();
@@ -56,8 +55,10 @@ public:
     void initQuadMesh();
     void drawQuad();
     void prepareForDeferredShading();
+    void setvSync(bool vSyncStatus);
 
     void setCamera(Camera c);
+    void addNPC(Player npc);
     void setPlayer(Player p);
     void setLight(Light light);
 };

@@ -1,14 +1,21 @@
 #include "Window.h"
 int main(int argc, char * argv[]) {
     Window w(800, 600, "Project Ilo");
+    w.setvSync(false);
     //set camera
     //Position, then target then define the up direction (+Y = Up)
     float eyeHeight = 2.0f;
-    Camera c1(glm::vec3(0,eyeHeight,0),glm::vec3(0,eyeHeight,-2),glm::vec3(0,1,0));
+    Camera c1(glm::vec3(0,eyeHeight,0),glm::vec3(0,eyeHeight,-1.5f),glm::vec3(0,1,0));
     w.setCamera(c1);
     //set player and init him
-    Player p1;
-    w.setPlayer(p1);
+    Player p1("./shapes/untitled.obj");
+    w.addNPC(p1);
+    Player light("./shapes/suzanne.obj");
+    w.addNPC(light);
+
+    w.mGameObjects[0].setInstances(10);
+    w.mGameObjects[1].setTransform(0, 8.0f,0.0f, 3.14f);
+
 
     //create lights and add them to the window
     //the first light created will be bound on the camera's position
