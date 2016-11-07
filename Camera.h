@@ -9,7 +9,7 @@ public:
     glm::mat4 mCamera;
     glm::vec3 mUp;
     glm::vec3 mTarget;
-    glm::vec3 mPosition,mLookDir;
+    glm::vec3 mPosition,mLookDir,mNormalizedXZLookDir;
     Camera();
     Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
     ~Camera();
@@ -19,7 +19,8 @@ public:
     void uploadCameraInfo(int shaderProgramID);
     void update();
     void setViewPos(int shaderProgramID);
-    void rotate(float angle);
+    void rotateJaw(float angle);
+    void rotatePitch(float angle);
     void moveWithDir(float spd);
     void movePerpendicularOnDir(float spd);
 };

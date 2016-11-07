@@ -45,6 +45,9 @@ void Window::init() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+    SDL_ShowCursor(SDL_DISABLE);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
 
     mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN
@@ -231,7 +234,7 @@ void Window::checkEvents() {
             mCamera.mTarget.x -= mPlayer.xSpd;*/
             //mPlayer.mX -= mPlayer.xSpd;
         }
-    else if (state[SDL_SCANCODE_D]) {
+    if (state[SDL_SCANCODE_D]) {
             std::cout << "right" << std::endl;
             mCamera.movePerpendicularOnDir(walkAroundSpeed);
             /*mCamera.mTarget.x += mPlayer.xSpd;
@@ -254,18 +257,19 @@ void Window::checkEvents() {
         }
     if (state [SDL_SCANCODE_Q]) {
             std::cout << "down" << std::endl;
-            mCamera.rotate(rotateSpeed);
+            mCamera.rotateJaw(rotateSpeed);
             //mPlayer.mZ -= mPlayer.ySpd;
         }
     if (state[SDL_SCANCODE_E]) {
             std::cout << "down" << std::endl;
-            mCamera.rotate(-rotateSpeed);
+            mCamera.rotateJaw(-rotateSpeed);
             //mPlayer.mZ -= mPlayer.ySpd;
         }
     if (state[SDL_SCANCODE_ESCAPE]) {
             std::cout << "Closing" << std::endl;
             sdlDie();
         }
+    bool touch = false;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_WINDOWEVENT:
@@ -279,7 +283,17 @@ void Window::checkEvents() {
         case SDL_QUIT:
             sdlDie();
             break;
-
+        case SDL_FINGERMOTION:
+            touch = true;
+            mCamera.rotateJaw((-10)*event.tfinger.dx);
+            mCamera.rotatePitch((-10)*event.tfinger.dy);
+            break;
+        case SDL_MOUSEMOTION:
+            if (!touch) {
+                mCamera.rotateJaw((-1)*rotateSpeed*event.motion.xrel);
+                mCamera.rotatePitch((-1)*rotateSpeed*event.motion.yrel);
+            }
+            break;
         }
     }
 }
