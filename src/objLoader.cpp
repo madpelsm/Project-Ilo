@@ -3,10 +3,10 @@
 objectLoader::objectLoader(std::string _inputFile) {
     filePath = _inputFile;
     std::cout << "Loading object: " << filePath << std::endl;
-    //mtlPath sets the path automaticly, but you have to keep the materials in the same folder as the mesh
+    // mtlPath sets the path automaticly, but you have to keep the materials in
+    // the same folder as the mesh
     std::string mtlPath = _inputFile.substr(0, _inputFile.find_last_of("/") + 1);
     ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, filePath.c_str(), mtlPath.c_str());
-
 
     if (!err.empty()) { // `err` may contain warning message.
         std::cerr << err << std::endl;
@@ -35,7 +35,7 @@ objectLoader::objectLoader(std::string _inputFile) {
                 float ny = attrib.normals[3 * idx.normal_index + 1];
                 float nz = attrib.normals[3 * idx.normal_index + 2];
                 /*float tx = attrib.texcoords[2 * idx.texcoord_index + 0];
-                float ty = attrib.texcoords[2 * idx.texcoord_index + 1];*/
+        float ty = attrib.texcoords[2 * idx.texcoord_index + 1];*/
                 float c1 = 1, c2 = 1, c3 = 1, shininess = 32.0f, specStrength = 1.0f, ambientAmount = 0;
                 if (f < shapes[s].mesh.material_ids.size() && shapes[s].mesh.material_ids.size() >= 0) {
                     c1 = materials[shapes[s].mesh.material_ids[f]].diffuse[0];
@@ -43,19 +43,16 @@ objectLoader::objectLoader(std::string _inputFile) {
                     c3 = materials[shapes[s].mesh.material_ids[f]].diffuse[2];
                     specStrength = materials[shapes[s].mesh.material_ids[f]].specular[0];
                     float ambientAmount_temp = materials[shapes[s].mesh.material_ids[f]].ambient[0];
-                    //temporary fix: just select the right ambient amount in Blender or equivalent
-                    //recommended is ambient 0
+                    // temporary fix: just select the right ambient amount in Blender or
+                    // equivalent
+                    // recommended is ambient 0
                     ambientAmount = (0.0f > ambientAmount_temp) ? ambientAmount_temp : 0.0f;
                     float shiny_temp = materials[shapes[s].mesh.material_ids[f]].shininess;
                     shininess = (1.0f < shiny_temp) ? shiny_temp : 1.0f;
                 }
-                mVertices.push_back(Vertex2(
-                    Vertex(glm::vec3(vx, vy, vz), glm::vec3(c1, c2, c3)),
-                    glm::vec3(-nx, -ny, -nz),
-                    glm::vec3(shininess, specStrength, ambientAmount)));
-
+                mVertices.push_back(Vertex2(Vertex(glm::vec3(vx, vy, vz), glm::vec3(c1, c2, c3)), glm::vec3(-nx, -ny, -nz),
+                                            glm::vec3(shininess, specStrength, ambientAmount)));
             }
-
 
             index_offset += fv;
 
@@ -65,10 +62,8 @@ objectLoader::objectLoader(std::string _inputFile) {
     }
 }
 
-
 std::vector<Vertex2> objectLoader::getVertices() {
     return mVertices;
-
 }
 std::vector<GLushort> objectLoader::getIndices() {
     return mIndices;

@@ -1,11 +1,10 @@
 #pragma once
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 class Camera {
-
-public:
+  public:
     glm::mat4 mCamera;
     glm::vec3 mUp;
     glm::vec3 mTarget;

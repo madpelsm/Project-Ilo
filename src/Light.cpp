@@ -1,17 +1,15 @@
 #include "Light.h"
 
-
 Light::Light(glm::vec3 Pos) {
-    //default light with intensity 1 and ambient component of 10% will be made
+    // default light with intensity 1 and ambient component of 10% will be made
     mPosition = Pos;
     mColor = glm::vec3(1, 1, 1);
     lightID = lightsCreated;
     lightsCreated++;
 }
 
-
 Light::Light(glm::vec3 Pos, glm::vec3 Color) {
-    //set position, ambient component then the intensity
+    // set position, ambient component then the intensity
     mPosition = Pos;
     mColor = Color;
     lightID = lightsCreated;
@@ -19,7 +17,6 @@ Light::Light(glm::vec3 Pos, glm::vec3 Color) {
 }
 
 Light::~Light() {
-
 }
 
 void Light::upload(int ShaderProgramID) {
@@ -33,7 +30,5 @@ void Light::move(float dx, float dy, float dz) {
     mPosition.x = dx;
     mPosition.y = dy;
     mPosition.z = dz;
-
-
 }
 int Light::lightsCreated = 0;

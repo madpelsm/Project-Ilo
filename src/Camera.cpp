@@ -14,14 +14,12 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
 }
 
 Camera::~Camera() {
-
 }
 
 void Camera::move(glm::vec3 position, glm::vec3 target) {
     mTarget = target;
     mPosition = position;
     update();
-
 }
 
 void Camera::move(glm::vec3 target) {
@@ -45,34 +43,32 @@ void Camera::update() {
 void Camera::rotateJaw(float angle) {
     glm::vec4 LookDirection = glm::vec4(mTarget - mPosition, 0.0f);
     mLookDir = normalize(glm::vec3(LookDirection));
-    //rotate around y axis
+    // rotate around y axis
     glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 1, 0));
-    glm::vec3 rotated = glm::vec3(rotationMat*LookDirection); //discard the w comp;
-    //mPosition stays the same
+    glm::vec3 rotated = glm::vec3(rotationMat * LookDirection); // discard the w comp;
+    // mPosition stays the same
     mTarget = mPosition + rotated;
-
 }
 
 void Camera::rotatePitch(float angle) {
     glm::vec4 LookDirection = glm::vec4(mTarget - mPosition, 0.0f);
     mLookDir = normalize(glm::vec3(LookDirection));
-    //rotate around y axis
+    // rotate around y axis
     glm::mat4 rotationMat = glm::rotate(glm::mat4(1), angle, glm::vec3(-mLookDir.z, 0, mLookDir.x));
-    glm::vec3 rotated = glm::vec3(rotationMat*LookDirection); //discard the w comp;
-                                                              //mPosition stays the same
+    glm::vec3 rotated = glm::vec3(rotationMat * LookDirection); // discard the w comp;
+    // mPosition stays the same
     mTarget = mPosition + rotated;
-
 }
 void Camera::moveWithDir(float spd) {
     mNormalizedXZLookDir = glm::normalize(glm::vec3(mLookDir.x, 0, mLookDir.z));
 
-    mPosition += spd*mNormalizedXZLookDir;
-    mTarget += spd*mNormalizedXZLookDir;
+    mPosition += spd * mNormalizedXZLookDir;
+    mTarget += spd * mNormalizedXZLookDir;
 }
 void Camera::movePerpendicularOnDir(float spd) {
     mNormalizedXZLookDir = glm::normalize(glm::vec3(mLookDir.x, 0, mLookDir.z));
 
-    //standard is move right
-    mPosition += spd*glm::vec3(-mNormalizedXZLookDir.z, 0, mNormalizedXZLookDir.x);
-    mTarget += spd*glm::vec3(-mNormalizedXZLookDir.z, 0, mNormalizedXZLookDir.x);
+    // standard is move right
+    mPosition += spd * glm::vec3(-mNormalizedXZLookDir.z, 0, mNormalizedXZLookDir.x);
+    mTarget += spd * glm::vec3(-mNormalizedXZLookDir.z, 0, mNormalizedXZLookDir.x);
 }

@@ -1,0 +1,10 @@
+# We'll use defaults from the LLVM style, but with 4 columns indentation.
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 140
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+Standard: Cpp11
+TabWidth: 4
+PointerBindsToType: false

@@ -1,4 +1,0 @@
-﻿  objLoader.cpp
-c:\users\mathi\documents\github\project-ilo\objloader.cpp(27): warning C4018: '<': signed/unsigned mismatch
-  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.exe
-  Project Ilo.vcxproj -> C:\Users\mathi\Documents\GitHub\Project-Ilo\Debug\Project Ilo.pdb (Partial PDB)

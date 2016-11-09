@@ -1,12 +1,10 @@
 #include "Shader.h"
 #include <iostream>
 Shader::Shader() {
-
 }
 bool Shader::loadShader(std::string pos, int shaderType) {
     std::ifstream t(pos);
-    std::string str((std::istreambuf_iterator<char>(t)),
-        std::istreambuf_iterator<char>());
+    std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
     shaderID = glCreateShader(shaderType);
     const char *c_str = str.c_str();
     if (shaderID == 0) {
@@ -15,7 +13,7 @@ bool Shader::loadShader(std::string pos, int shaderType) {
     glShaderSource(shaderID, 1, &c_str, nullptr);
     glCompileShader(shaderID);
 
-    //debugging
+    // debugging
     GLint isCompiled = 0;
     glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
     if (isCompiled == GL_FALSE) {
@@ -32,7 +30,7 @@ bool Shader::loadShader(std::string pos, int shaderType) {
             std::cout << errorLog[i];
         }
         // Exit with failure.
-        glDeleteShader(shaderID);  // Don't leak the shader.
+        glDeleteShader(shaderID); // Don't leak the shader.
         return false;
     }
     this->shaderType = shaderType;

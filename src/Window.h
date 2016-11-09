@@ -1,16 +1,16 @@
 #pragma once
-#include <SDL.h>
-#include <iostream>
-#include <glad/glad.h>
+#include "Camera.h"
+#include "GameObject.h"
+#include "Light.h"
+#include "Player.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include <SDL.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Camera.h"
-#include "GameObject.h"
-#include "Player.h"
-#include "Light.h"
+#include <iostream>
 
 class Window {
     int mWidth, mHeight;
@@ -19,27 +19,23 @@ class Window {
     bool windowInitialised = false;
     short frames;
     bool vSync = true;
-    float lastTime = SDL_GetTicks()
-        , walkAroundSpeed = 0.09f //camera movement speed
-        , rotateSpeed = 0.01f, mSSAA_amount = 2.0f; //camera rotation speed
-public:
+    float lastTime = SDL_GetTicks(),
+          walkAroundSpeed = 0.09f // camera movement speed
+        ,
+          rotateSpeed = 0.01f, mSSAA_amount = 2.0f; // camera rotation speed
+  public:
     Camera mCamera;
     ShaderProgram firstPassShader, secondPassShader, thirdPassShader;
-    SDL_Window * mSDLwindow = nullptr;
+    SDL_Window *mSDLwindow = nullptr;
     SDL_GLContext glContext;
     SDL_Event event;
-    Shader vertShader, fragShader,
-        firstPassVertShader, firstPassFragShader,
-        secondPassVertShader, secondPassFragShader,
+    Shader vertShader, fragShader, firstPassVertShader, firstPassFragShader, secondPassVertShader, secondPassFragShader,
         thirdPassVertShader, thirdPassFragShader;
-    std::vector<Player*> mGameObjects;
+    std::vector<Player *> mGameObjects;
     Light mOmniLight, mOmniLight2;
-    std::vector <Light> mOmniLights;
-    GLuint gbuffer, gPosition, gNormal,
-        gMaterialColor, gMaterialProps,
-        rboDepth, quadVao, ppFBO, ppRBO,
-        screenTex;
-    GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    std::vector<Light> mOmniLights;
+    GLuint gbuffer, gPosition, gNormal, gMaterialColor, gMaterialProps, rboDepth, quadVao, ppFBO, ppRBO, screenTex;
+    GLuint attachments[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
 
     Window();
     Window(int width, int height, std::string title);
