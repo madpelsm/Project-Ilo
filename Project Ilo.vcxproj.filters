@@ -106,5 +106,11 @@
     <None Include="secondPassVert.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="thirdPassVert.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="thirdPassFrag.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

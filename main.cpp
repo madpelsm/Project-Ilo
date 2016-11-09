@@ -2,6 +2,7 @@
 int main(int argc, char * argv[]) {
     Window w(800, 600, "Project Ilo");
     w.setvSync(false);
+    w.setSSAA(1.0);
     //set camera
     //Position, then target then define the up direction (+Y = Up)
     float eyeHeight = 2.0f;
@@ -9,11 +10,14 @@ int main(int argc, char * argv[]) {
     w.setCamera(c1);
     //set player and init him
     Player p1("./shapes/untitled.obj");
+    //this adds to mGameobjects (bad naming )
+
+    (p1).setInstances(10);
     w.addNPC(p1);
+
     Player light("./shapes/suzanne.obj");
     w.addNPC(light);
 
-    w.mGameObjects[0].setInstances(10);
     w.mGameObjects[1].setTransform(0, 8.0f,0.0f, 3.14f);
 
 

@@ -170,6 +170,8 @@
     <None Include="geometryShader.geom" />
     <None Include="secondPassFrag.frag" />
     <None Include="secondPassVert.vert" />
+    <None Include="thirdPassFrag.frag" />
+    <None Include="thirdPassVert.vert" />
     <None Include="VertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

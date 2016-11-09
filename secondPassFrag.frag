@@ -1,4 +1,7 @@
 #version 330
+
+
+
 struct OmniLight{
 	vec3 position;
 	vec3 lightColor;
@@ -32,7 +35,7 @@ void main()
 
 	
 	
-	FragColor = vec4(pow(lightedSurface,vec3(0.4545) ), 1.0);
+	FragColor =vec4(lightedSurface,1.0);
 
 }
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){

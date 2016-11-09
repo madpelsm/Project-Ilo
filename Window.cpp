@@ -31,11 +31,42 @@ void Window::sdlDie() {
     glDeleteTextures(1, &gMaterialProps);
     glDeleteVertexArrays(1, &quadVao);
     glDeleteRenderbuffers(1, &rboDepth);
+    glDeleteRenderbuffers(1, &ppRBO);
+    glDeleteFramebuffers(1, &ppFBO);
 
+    thirdPassShader.deleteProgram();
     secondPassShader.deleteProgram();
     firstPassShader.deleteProgram();
     SDL_DestroyWindow(mSDLwindow);
     SDL_Quit();
+}
+
+void Window::preparePostProcessing() {
+    glGenFramebuffers(1, &ppFBO);
+    //glGenRenderbuffers(1, &ppRBO);
+    //gen texture
+    glGenTextures(1, &screenTex);
+    glBindTexture(GL_TEXTURE_2D, screenTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, mWidth, mHeight, 0,GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, ppFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTex, 0);
+    
+    GLenum attch[1] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, attch);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, ppRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_ATTACHMENT, mSSAA_amount*mWidth, mSSAA_amount*mHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ppRBO);
+    
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cout << "Post processing fbo not complete!" << std::endl;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void Window::init() {
@@ -113,17 +144,6 @@ void Window::initGL() {
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
-
-    //load in shaders
-    //vertShader.loadShader("VertexShader.vert", GL_VERTEX_SHADER);
-    //fragShader.loadShader("FragmentShader.frag", GL_FRAGMENT_SHADER);
-    ////create attach link use
-    //p1.createProgram();
-    //p1.attachShaderToProgram(&vertShader);
-    ////p1.attachShaderToProgram(&geometryShader);
-    //p1.attachShaderToProgram(&fragShader);
-    //p1.linkProgram();
-    //p1.useProgram();
     
     //first pass shader creation
     firstPassVertShader.loadShader("firstPassVertex.vert", GL_VERTEX_SHADER);
@@ -142,14 +162,26 @@ void Window::initGL() {
     secondPassShader.attachShaderToProgram(&secondPassFragShader);
     secondPassShader.linkProgram();
 
-    secondPassShader.useProgram();
-    destroyShaders();
+    thirdPassVertShader.loadShader("thirdPassVert.vert", GL_VERTEX_SHADER);
+    thirdPassFragShader.loadShader("thirdPassFrag.frag", GL_FRAGMENT_SHADER);
 
+    thirdPassShader.createProgram();
+    thirdPassShader.attachShaderToProgram(&thirdPassVertShader);
+    thirdPassShader.attachShaderToProgram(&thirdPassFragShader);
+    thirdPassShader.linkProgram();
+    thirdPassShader.useProgram();
+    glUniform1i(glGetUniformLocation(thirdPassShader.getProgramID(), "screenTex"), 0);
+
+    
+    destroyShaders();
+    secondPassShader.useProgram();
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gPosition"), 0);
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gNormal"), 1);
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlColor"), 2);
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlProp"), 3);
+    glUniform1f(glGetUniformLocation(secondPassShader.getProgramID(), "SSAA_amount"), mSSAA_amount);
 
+    
     std::cout << "OpenGL window initialised" << std::endl;
     //clear the buffer before first render, it looks nicer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -170,25 +202,25 @@ void Window::prepareForDeferredShading() {
     glBindFramebuffer(GL_FRAMEBUFFER, gbuffer);
     //position
     glBindTexture(GL_TEXTURE_2D, gPosition);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
     //normals
     glBindTexture(GL_TEXTURE_2D, gNormal);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8_SNORM, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16_SNORM, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
     //materialColor
     glBindTexture(GL_TEXTURE_2D, gMaterialColor);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gMaterialColor, 0);
     //materialProps
     glBindTexture(GL_TEXTURE_2D, gMaterialProps);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMaterialProps, 0);
@@ -198,7 +230,7 @@ void Window::prepareForDeferredShading() {
     //bind the depthbuffer
 
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mSSAA_amount*mWidth, mSSAA_amount*mHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -207,6 +239,7 @@ void Window::prepareForDeferredShading() {
         std::cout << "framebuffer Complete" << std::endl;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    preparePostProcessing();
 }
 
 void Window::initQuadMesh() {
@@ -370,8 +403,8 @@ void Window::renderFirstPass() {
 }
 
 void Window::renderSecondPass() {
-    //glDisable(GL_CULL_FACE);
-
+    glDisable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, ppFBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     secondPassShader.useProgram();
     glActiveTexture(GL_TEXTURE0);
@@ -382,10 +415,21 @@ void Window::renderSecondPass() {
     glBindTexture(GL_TEXTURE_2D, gMaterialColor);
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, gMaterialProps);
+    drawQuad();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     //light stuff
     //upload light info
     
+   
+}
+
+void Window::renderThirdPass() {
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    thirdPassShader.useProgram();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, screenTex);
     drawQuad();
 }
 
@@ -411,7 +455,7 @@ void Window::render() {
     renderFirstPass();
     //second pass: render with the textures
     renderSecondPass();
-
+    renderThirdPass();
     
 
 
@@ -442,22 +486,33 @@ void Window::destroyShaders(){
     firstPassFragShader.deleteShader();
     secondPassFragShader.deleteShader();
     secondPassVertShader.deleteShader();
+    thirdPassVertShader.deleteShader();
+    thirdPassFragShader.deleteShader();
     
     vertShader.deleteShader();
     fragShader.deleteShader();
 }
 
-void Window::setCamera(Camera c) {
+void Window::setCamera(Camera &c) {
     mCamera = c;
 }
 
-void Window::setPlayer(Player p) {
+void Window::setSSAA(float _SSAAamount) {
+    if (_SSAAamount < 1.0f) {
+        mSSAA_amount = 1.0f;
+    }
+    else {
+        mSSAA_amount = _SSAAamount;
+    }
+}
+
+void Window::setPlayer(Player &p) {
     //set the player for this game
     mGameObjects.push_back(p);
 
 }
 
-void Window::setLight(Light light) {
+void Window::setLight(Light &light) {
     mOmniLights.push_back(light);
 }
 

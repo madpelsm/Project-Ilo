@@ -21,18 +21,24 @@ class Window {
     bool vSync = true;
     float lastTime = SDL_GetTicks()
         ,walkAroundSpeed = 0.09f //camera movement speed
-        ,rotateSpeed = 0.01f; //camera rotation speed
+        ,rotateSpeed = 0.01f,mSSAA_amount =1; //camera rotation speed
 public:
     Camera mCamera;
-    ShaderProgram firstPassShader,secondPassShader;
+    ShaderProgram firstPassShader,secondPassShader,thirdPassShader;
     SDL_Window * mSDLwindow=nullptr;
     SDL_GLContext glContext;
     SDL_Event event;
-    Shader vertShader, fragShader,firstPassVertShader,firstPassFragShader, secondPassVertShader, secondPassFragShader;
+    Shader vertShader, fragShader,
+        firstPassVertShader, firstPassFragShader, 
+        secondPassVertShader, secondPassFragShader,
+        thirdPassVertShader,thirdPassFragShader;
     std::vector<Player> mGameObjects;
     Light mOmniLight,mOmniLight2;
     std::vector <Light> mOmniLights;
-    GLuint gbuffer, gPosition, gNormal, gMaterialColor, gMaterialProps,rboDepth,quadVao;
+    GLuint gbuffer, gPosition, gNormal, 
+        gMaterialColor, gMaterialProps,
+        rboDepth,quadVao, ppFBO,ppRBO,
+        screenTex;
     GLuint attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
     
     Window();
@@ -48,6 +54,7 @@ public:
     void render();
     void renderFirstPass();
     void renderSecondPass();
+    void renderThirdPass();
     void checkEvents();
     void resize();
     void destroyShaders();
@@ -55,10 +62,12 @@ public:
     void initQuadMesh();
     void drawQuad();
     void prepareForDeferredShading();
+    void preparePostProcessing();
     void setvSync(bool vSyncStatus);
+    void setSSAA(float _SSAAamount);
 
-    void setCamera(Camera c);
+    void setCamera(Camera &c);
     void addNPC(Player npc);
-    void setPlayer(Player p);
-    void setLight(Light light);
+    void setPlayer(Player &p);
+    void setLight(Light &light);
 };
