@@ -9,16 +9,16 @@ int main(int argc, char * argv[]) {
     Camera c1(glm::vec3(0,eyeHeight,0),glm::vec3(0,eyeHeight,-1.5f),glm::vec3(0,1,0));
     w.setCamera(c1);
     //set player and init him
-    Player p1("./shapes/untitled.obj");
+    Player * p1 = new Player("./shapes/untitled.obj");
     //this adds to mGameobjects (bad naming )
 
-    (p1).setInstances(10);
-    w.addNPC(p1);
+    w.addNPC(*p1);
+    (*p1).setInstances(1);
 
-    Player light("./shapes/suzanne.obj");
-    w.addNPC(light);
+    Player * light = new Player("./shapes/untitled.obj");
+    w.addNPC(*light);
+    (*light).setTransform(0, 8.0f, 0.0f, 3.14f);
 
-    w.mGameObjects[1].setTransform(0, 8.0f,0.0f, 3.14f);
 
 
     //create lights and add them to the window

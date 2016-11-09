@@ -20,7 +20,7 @@ uniform sampler2D gMtlProp;
 uniform OmniLight omniLights[Amount_omniLights];
 uniform vec3 eyePos;
 
-out vec4 FragColor;
+out vec3 FragColor;
 
 void main()
 {
@@ -35,7 +35,7 @@ void main()
 
 	
 	
-	FragColor =vec4(lightedSurface,1.0);
+	FragColor =lightedSurface;
 
 }
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight){

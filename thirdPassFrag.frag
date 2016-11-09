@@ -1,4 +1,4 @@
-#version 400
+#version 330
 
 
 
@@ -9,19 +9,19 @@ uniform sampler2D screenTex;
 out vec4 color;
 
 void main(){
-	float offset = 1.0f;
+	float offset = 0.5f;
 	
 	
 
     float kernel[9] = float[](
-       0,0,0,
-	   0,1,0,
-	   0,0,0
+		-1,-1,-1,
+		-1,8,-1,
+		-1,-1,-1
     );
 
-	vec3 T = texture(screenTex,texCoords).rgb;
+	//vec3 T = texture(screenTex,texCoords, 1.0).rgb;
 	
-    //vec3 T = applyKernel(offset,kernel);
+    vec3 T = applyKernel(offset,kernel);
 	color = vec4(pow(T,vec3(0.4545)),1.0);
 }
 vec3 applyKernel(float offset, float[9] kernel){
@@ -38,9 +38,6 @@ vec3 applyKernel(float offset, float[9] kernel){
         vec2(0.0,    -offset), // bottom-center
         vec2(offset,  -offset)  // bottom-right    
     );
-	//use the screenTex, as this won't change, this is a simple pp shader
-	//with only 1 tex input
-
 	for(int i = 0; i < 9; i++)
     {
         B += vec3(texture(screenTex, texCoords.st + offsets[i]/texSize))*kernel[i];

@@ -21,7 +21,7 @@ class Window {
     bool vSync = true;
     float lastTime = SDL_GetTicks()
         ,walkAroundSpeed = 0.09f //camera movement speed
-        ,rotateSpeed = 0.01f,mSSAA_amount =1; //camera rotation speed
+        ,rotateSpeed = 0.01f,mSSAA_amount =2.0f; //camera rotation speed
 public:
     Camera mCamera;
     ShaderProgram firstPassShader,secondPassShader,thirdPassShader;
@@ -32,7 +32,7 @@ public:
         firstPassVertShader, firstPassFragShader, 
         secondPassVertShader, secondPassFragShader,
         thirdPassVertShader,thirdPassFragShader;
-    std::vector<Player> mGameObjects;
+    std::vector<Player*> mGameObjects;
     Light mOmniLight,mOmniLight2;
     std::vector <Light> mOmniLights;
     GLuint gbuffer, gPosition, gNormal, 
@@ -67,7 +67,7 @@ public:
     void setSSAA(float _SSAAamount);
 
     void setCamera(Camera &c);
-    void addNPC(Player npc);
+    void addNPC(Player &npc);
     void setPlayer(Player &p);
     void setLight(Light &light);
 };

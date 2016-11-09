@@ -21,8 +21,8 @@ Window::~Window() {
 void Window::sdlDie() {
     closed = true;
     std::cout << "killing SDL" << std::endl;
-    for (unsigned int i = 0; i < mGameObjects.size();i++) {
-        mGameObjects[i].cleanup();
+    for (unsigned int i = 0; i < mGameObjects.size(); i++) {
+        (*mGameObjects[i]).cleanup();
     }
     glDeleteFramebuffers(1, &gbuffer);
     glDeleteTextures(1, &gPosition);
@@ -33,7 +33,7 @@ void Window::sdlDie() {
     glDeleteRenderbuffers(1, &rboDepth);
     glDeleteRenderbuffers(1, &ppRBO);
     glDeleteFramebuffers(1, &ppFBO);
-
+    
     thirdPassShader.deleteProgram();
     secondPassShader.deleteProgram();
     firstPassShader.deleteProgram();
@@ -42,12 +42,13 @@ void Window::sdlDie() {
 }
 
 void Window::preparePostProcessing() {
+
     glGenFramebuffers(1, &ppFBO);
     //glGenRenderbuffers(1, &ppRBO);
     //gen texture
     glGenTextures(1, &screenTex);
     glBindTexture(GL_TEXTURE_2D, screenTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, mWidth, mHeight, 0,GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, mWidth, mHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -59,7 +60,7 @@ void Window::preparePostProcessing() {
     glDrawBuffers(1, attch);
 
     glBindRenderbuffer(GL_RENDERBUFFER, ppRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_ATTACHMENT, mSSAA_amount*mWidth, mSSAA_amount*mHeight);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_ATTACHMENT, mWidth, mHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ppRBO);
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -92,12 +93,7 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     //vsync
-    if (vSync) {
-        SDL_GL_SetSwapInterval(1);
-    }
-    else {
-        SDL_GL_SetSwapInterval(0);
-    }
+    SDL_GL_SetSwapInterval(0);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -113,7 +109,7 @@ void Window::setvSync(bool vSyncStatus) {
 void Window::loadGeometries() {
     std::vector<std::thread> loaders;
     for (unsigned int i = 0; i < mGameObjects.size();i++) {
-        loaders.push_back(std::thread(&Player::loadDefaultGeometry, &mGameObjects[i]));
+        loaders.push_back(std::thread(&Player::loadDefaultGeometry, mGameObjects[i]));
     }
 
     
@@ -125,19 +121,18 @@ void Window::loadGeometries() {
 
 void Window::initAssets() {
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        mGameObjects[i].initGL();
+        (*mGameObjects[i]).initGL();
     }
 }
 
 void Window::initGL() {
     gladLoadGLLoader(SDL_GL_GetProcAddress);
-    glViewport(0, 0, mWidth, mHeight);
+    //glViewport(0, 0, mWidth, mHeight);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     //depth testing
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
     glDepthFunc(GL_LESS);
-
     //face culling
     glEnable(GL_CULL_FACE);
     //discard (cull) the back facing faces and define the winding order
@@ -171,7 +166,6 @@ void Window::initGL() {
     thirdPassShader.linkProgram();
     thirdPassShader.useProgram();
     glUniform1i(glGetUniformLocation(thirdPassShader.getProgramID(), "screenTex"), 0);
-
     
     destroyShaders();
     secondPassShader.useProgram();
@@ -179,7 +173,6 @@ void Window::initGL() {
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gNormal"), 1);
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlColor"), 2);
     glUniform1i(glGetUniformLocation(secondPassShader.getProgramID(), "gMtlProp"), 3);
-    glUniform1f(glGetUniformLocation(secondPassShader.getProgramID(), "SSAA_amount"), mSSAA_amount);
 
     
     std::cout << "OpenGL window initialised" << std::endl;
@@ -202,27 +195,27 @@ void Window::prepareForDeferredShading() {
     glBindFramebuffer(GL_FRAMEBUFFER, gbuffer);
     //position
     glBindTexture(GL_TEXTURE_2D, gPosition);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
     //normals
     glBindTexture(GL_TEXTURE_2D, gNormal);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16_SNORM, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16_SNORM, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
     //materialColor
     glBindTexture(GL_TEXTURE_2D, gMaterialColor);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gMaterialColor, 0);
     //materialProps
     glBindTexture(GL_TEXTURE_2D, gMaterialProps);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mSSAA_amount*mWidth, mSSAA_amount*mHeight, 0, GL_RGB, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, mWidth, mHeight, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gMaterialProps, 0);
 
     //draw to the textures
@@ -230,7 +223,7 @@ void Window::prepareForDeferredShading() {
     //bind the depthbuffer
 
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mSSAA_amount*mWidth, mSSAA_amount*mHeight);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -239,6 +232,7 @@ void Window::prepareForDeferredShading() {
         std::cout << "framebuffer Complete" << std::endl;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     preparePostProcessing();
 }
 
@@ -357,8 +351,10 @@ void Window::update() {
     mCamera.update();
     //mPlayer.update();
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        mGameObjects[i].update();
+        (*mGameObjects[i]).update();
     }
+
+    (*mGameObjects[1]).setTransform(0, 8, 0, SDL_GetTicks() / 1000.0f);
     //you can put lightmovements here 
     mOmniLights[0].move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
     //update gameobjects
@@ -371,7 +367,7 @@ void Window::upload() {
     //upload perspective info
     firstPassShader.useProgram();
     int perspLoc = glGetUniformLocation(firstPassShader.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(1.4f, mWidth / (float)mHeight, 0.1f, 100.0f); //90 degrees fov
+    glm::mat4 perspM = glm::perspective(1.4f, mWidth / (float)mHeight, 0.1f, 50.0f); //90 degrees fov
     glProgramUniformMatrix4fv(firstPassShader.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     //set modelTransform to unity as start
@@ -390,13 +386,11 @@ void Window::upload() {
 
 void Window::renderFirstPass() {
     //set the shaderProgram
-
     glBindFramebuffer(GL_FRAMEBUFFER, gbuffer);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glDrawBuffers(4, attachments);
     firstPassShader.useProgram();
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        mGameObjects[i].render(firstPassShader.getProgramID());
+        (*mGameObjects[i]).render(firstPassShader.getProgramID());
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -418,6 +412,8 @@ void Window::renderSecondPass() {
     drawQuad();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    
+
     //light stuff
     //upload light info
     
@@ -430,7 +426,9 @@ void Window::renderThirdPass() {
     thirdPassShader.useProgram();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, screenTex);
+    glGenerateMipmap(GL_TEXTURE_2D);
     drawQuad();
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Window::drawQuad() {
@@ -476,6 +474,9 @@ void Window::resize() {
     glDeleteTextures(1, &gPosition);
     glDeleteTextures(1, &gMaterialColor);
     glDeleteTextures(1, &gMaterialProps);
+    glDeleteTextures(1, &screenTex);
+    glDeleteRenderbuffers(1, &ppRBO);
+    glDeleteFramebuffers(1, &ppFBO);
     glDeleteRenderbuffers(1, &rboDepth);
     prepareForDeferredShading();
     glViewport(0, 0, mWidth, mHeight);
@@ -488,7 +489,6 @@ void Window::destroyShaders(){
     secondPassVertShader.deleteShader();
     thirdPassVertShader.deleteShader();
     thirdPassFragShader.deleteShader();
-    
     vertShader.deleteShader();
     fragShader.deleteShader();
 }
@@ -508,7 +508,7 @@ void Window::setSSAA(float _SSAAamount) {
 
 void Window::setPlayer(Player &p) {
     //set the player for this game
-    mGameObjects.push_back(p);
+    mGameObjects.push_back(&p);
 
 }
 
@@ -516,6 +516,6 @@ void Window::setLight(Light &light) {
     mOmniLights.push_back(light);
 }
 
-void Window::addNPC(Player npc) {
-    this->mGameObjects.push_back(npc);
+void Window::addNPC(Player &npc) {
+    this->mGameObjects.push_back(&npc);
 }
