@@ -148,15 +148,14 @@
   <ItemGroup>
     <None Include="cmake\Modules\FindGLM.cmake" />
     <None Include="cmake\Modules\FindSDL2.cmake" />
-    <None Include="firstPassFragment.frag" />
-    <None Include="firstPassVertex.vert" />
-    <None Include="FragmentShader.frag" />
-    <None Include="geometryShader.geom" />
-    <None Include="secondPassFrag.frag" />
-    <None Include="secondPassVert.vert" />
-    <None Include="thirdPassFrag.frag" />
-    <None Include="thirdPassVert.vert" />
-    <None Include="VertexShader.vert" />
+    <None Include="shaders\firstPassFragment.frag" />
+    <None Include="shaders\firstPassVertex.vert" />
+    <None Include="shaders\FragmentShader.frag" />
+    <None Include="shaders\secondPassFrag.frag" />
+    <None Include="shaders\secondPassVert.vert" />
+    <None Include="shaders\thirdPassFrag.frag" />
+    <None Include="shaders\thirdPassVert.vert" />
+    <None Include="shaders\VertexShader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />

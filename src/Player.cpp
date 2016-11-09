@@ -63,6 +63,11 @@ void Player::createNormals() {
     std::cout << "normals Created for player" << std::endl;
 }
 
+
+void Player::setScale(glm::vec3 _scale) {
+    mScale = _scale;
+}
+
 glm::vec3 Player::getPosition() {
     return glm::vec3(mX, mY, mZ);
 }
@@ -78,14 +83,13 @@ void Player::fillOffsets() {
 
 void Player::update() {
     mTransformation =
-        glm::mat4(glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1)));
+        glm::mat4(glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1))*glm::scale(glm::mat4(1),mScale));
 }
 
 void Player::render(int shaderProgramID) {
     // set transform
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
-    // glUniform1f(glGetUniformLocation(shaderProgramID, "time"),
-    // SDL_GetTicks()/1000.0f);
+    glUniform1f(glGetUniformLocation(shaderProgramID, "time"),SDL_GetTicks()/1000.0f);
     glBindVertexArray(mVaoPlayer);
 
     glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size(), GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());

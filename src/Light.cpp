@@ -26,9 +26,9 @@ void Light::upload(int ShaderProgramID) {
     glUniform3f(glGetUniformLocation(ShaderProgramID, lightColorString.c_str()), mColor.x, mColor.y, mColor.z);
 }
 
-void Light::move(float dx, float dy, float dz) {
-    mPosition.x = dx;
-    mPosition.y = dy;
-    mPosition.z = dz;
+void Light::move(float x, float y, float z) {
+    mPosition.x = x;
+    mPosition.y = y;
+    mPosition.z = z;
 }
 int Light::lightsCreated = 0;

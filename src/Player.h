@@ -13,6 +13,7 @@ class Player : GameObject {
   ShaderProgram p1;*/
     int mInstances = 1;
     std::vector<glm::vec3> mOffsets;
+    glm::vec3 mScale=glm::vec3(1,1,1); // default scale 1
 
   public:
     std::string mGeomPath = "./shapes/suzanne.obj";
@@ -23,6 +24,7 @@ class Player : GameObject {
     Player(std::string _geomPath);
     ~Player();
     void initGL();
+    void setScale(glm::vec3 _scale);
     void setTransform(float x, float y, float z, float angleZ);
     void setShape(std::vector<Vertex> vertices);
     void loadGeometry(std::string filePath);

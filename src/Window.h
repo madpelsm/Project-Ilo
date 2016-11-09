@@ -18,7 +18,7 @@ class Window {
     bool closed = false;
     bool windowInitialised = false;
     short frames;
-    bool vSync = true;
+    bool vSync = true,fullscreen = false,windowMaximised = false;
     float lastTime = SDL_GetTicks(),
           walkAroundSpeed = 0.09f // camera movement speed
         ,
@@ -33,7 +33,7 @@ class Window {
         thirdPassVertShader, thirdPassFragShader;
     std::vector<Player *> mGameObjects;
     Light mOmniLight, mOmniLight2;
-    std::vector<Light> mOmniLights;
+    std::vector<Light *> mOmniLights;
     GLuint gbuffer, gPosition, gNormal, gMaterialColor, gMaterialProps, rboDepth, quadVao, ppFBO, ppRBO, screenTex;
     GLuint attachments[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
 

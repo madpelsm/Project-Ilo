@@ -9,14 +9,14 @@ uniform sampler2D screenTex;
 out vec4 color;
 
 void main(){
-	float offset = 0.5f;
+	float offset = 0.1f;
 	
 	
 
     float kernel[9] = float[](
 		-1,-1,-1,
-		-1,8,-1,
-		-1,-1,-1
+        -1,9,-1,
+        -1,-1,-1
     );
 
 	//vec3 T = texture(screenTex,texCoords, 1.0).rgb;

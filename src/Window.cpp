@@ -22,7 +22,7 @@ void Window::sdlDie() {
     closed = true;
     std::cout << "killing SDL" << std::endl;
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        (*mGameObjects[i]).cleanup();
+        mGameObjects[i]->cleanup();
     }
     glDeleteFramebuffers(1, &gbuffer);
     glDeleteTextures(1, &gPosition);
@@ -88,7 +88,7 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     // vsync
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -115,7 +115,7 @@ void Window::loadGeometries() {
 
 void Window::initAssets() {
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        (*mGameObjects[i]).initGL();
+        mGameObjects[i]->initGL();
     }
 }
 
@@ -303,7 +303,6 @@ void Window::checkEvents() {
         std::cout << "Closing" << std::endl;
         sdlDie();
     }
-    bool touch = false;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_WINDOWEVENT:
@@ -318,14 +317,36 @@ void Window::checkEvents() {
             sdlDie();
             break;
         case SDL_FINGERMOTION:
-            touch = true;
             mCamera.rotateJaw((-10) * event.tfinger.dx);
             mCamera.rotatePitch((-10) * event.tfinger.dy);
             break;
         case SDL_MOUSEMOTION:
-            if (!touch) {
-                mCamera.rotateJaw((-1) * rotateSpeed * event.motion.xrel);
-                mCamera.rotatePitch((-1) * rotateSpeed * event.motion.yrel);
+            mCamera.rotateJaw((-1) * rotateSpeed * event.motion.xrel);
+            mCamera.rotatePitch((-1) * rotateSpeed * event.motion.yrel);
+            break;
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.scancode) {
+            case SDL_SCANCODE_RETURN:
+                if (event.key.keysym.mod == KMOD_LALT) {
+                    if (!fullscreen) {
+                        fullscreen = true;
+                        SDL_SetWindowFullscreen(mSDLwindow, 1);
+                    }
+                    else {
+                        fullscreen = false;
+                        SDL_SetWindowFullscreen(mSDLwindow, 0);
+                    }
+                }
+                break;
+            case SDL_SCANCODE_F11:
+                if (!windowMaximised) {
+                    windowMaximised = true;
+                    SDL_MaximizeWindow(mSDLwindow);
+                }
+                else {
+                    windowMaximised = false;
+                    SDL_RestoreWindow(mSDLwindow);
+                }
             }
             break;
         }
@@ -337,12 +358,13 @@ void Window::update() {
     mCamera.update();
     // mPlayer.update();
     for (unsigned int i = 0; i < mGameObjects.size(); i++) {
-        (*mGameObjects[i]).update();
+        mGameObjects[i]->update();
     }
 
-    (*mGameObjects[1]).setTransform(0, 8, 0, SDL_GetTicks() / 1000.0f);
     // you can put lightmovements here
-    mOmniLights[0].move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
+
+    mOmniLights[0]->move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
+    mGameObjects[1]->setTransform(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z,0);
     // update gameobjects
     // box2d! pass a world
 }
@@ -366,7 +388,7 @@ void Window::upload() {
     secondPassShader.useProgram();
     mCamera.setViewPos(secondPassShader.getProgramID());
     for (auto i = 0; i < mOmniLights.size(); i++) {
-        mOmniLights[i].upload(secondPassShader.getProgramID());
+        mOmniLights[i]->upload(secondPassShader.getProgramID());
     }
 }
 
@@ -489,7 +511,7 @@ void Window::setPlayer(Player &p) {
 }
 
 void Window::setLight(Light &light) {
-    mOmniLights.push_back(light);
+    mOmniLights.push_back(&light);
 }
 
 void Window::addNPC(Player &npc) {
