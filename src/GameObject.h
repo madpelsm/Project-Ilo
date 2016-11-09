@@ -1,0 +1,12 @@
+#pragma once
+
+#include <vector>
+#include "Vertex.h"
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+class GameObject {
+public:
+    virtual void render(int shaderProgram) = 0;
+};

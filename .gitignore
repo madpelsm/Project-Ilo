@@ -2,6 +2,8 @@ build/
 Release/
 Debug/
 .vs/
+Project Ilo.VC.db
+
 
 # Windows image file caches
 Thumbs.db
