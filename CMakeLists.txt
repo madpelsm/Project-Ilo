@@ -25,8 +25,8 @@ include_directories(glad/include/)
 include_directories(${SDL2_INCLUDE_DIR}/SDL2)
 include_directories(${GLM_INCLUDE_DIR})
 
-file(GLOB ILO_SRC_FILES "./*.cpp")
-file(GLOB ILO_HDR_FILES "./*.h")
+file(GLOB ILO_SRC_FILES "./src/*.cpp")
+file(GLOB ILO_HDR_FILES "./src/*.h")
 
 set(ILO_SRC_FILES ${ILO_SRC_FILES} tiny_obj_loader.cc)
 set(GLAD_SRC_FILES glad/src/glad.c)

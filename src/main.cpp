@@ -1,6 +1,6 @@
 #include "Window.h"
 int main(int argc, char *argv[]) {
-    Window w(1920, 1080, "Project Ilo");
+    Window w(800, 600, "Project Ilo");
     w.setvSync(false);
     w.setSSAA(1.0);
     // set camera
