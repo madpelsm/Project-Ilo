@@ -9,7 +9,7 @@
 
 <b>Camera Controls</b>: Like you would in any FPS-game. so far </br>
 
-<h3>Designing your own levels<h3>
+<h3>Designing your own levels</h3>
 <p>You can design your own levels using any 3D editor, like Blender. Export it as .obj with material info in the .mtl file (Blender generates this). As for the material properties, following are the terms in blender with ther corresponding meaning in Ilo: </br></br> 
 <b>Diffuse</b>: the color of the object  </br>
 <b>Hardness</b>: This will be the shininess of the object </br>
