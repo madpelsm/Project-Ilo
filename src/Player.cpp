@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <SDL.h>
 Player::Player() {
+    mOffsets.push_back(glm::vec3(0,0,0));
 }
 Player::~Player() {
     cleanup();
@@ -41,6 +42,7 @@ void Player::createIndices() {
 }
 
 Player::Player(std::string _geomPath) {
+    mOffsets.push_back(glm::vec3(0, 0, 0));
     mGeomPath = _geomPath;
 }
 
@@ -71,14 +73,9 @@ void Player::setScale(glm::vec3 _scale) {
 glm::vec3 Player::getPosition() {
     return glm::vec3(mX, mY, mZ);
 }
-void Player::fillOffsets() {
-    // make only 3 instances
-    std::cout << "filling offsets" << std::endl;
-    for (unsigned int i = 0; i < mInstances; i++) {
-        for (unsigned int j = 0; j < mInstances; j++) {
-            mOffsets.push_back(glm::vec3((14.0f) * (j - (mInstances - 1) / 2.0f), 0, (-11.0f) * i));
-        }
-    }
+
+void Player::addInstance(glm::vec3 _offset) {
+    mOffsets.push_back(_offset);
 }
 
 void Player::update() {
@@ -103,14 +100,8 @@ void Player::refreshShaderTransforms(int shaderProgramID) {
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 }
 
-void Player::setInstances(int amount) {
-    mInstances = amount;
-}
-
 void Player::initGL() {
     // test fill the offsetarray (contains offset vectors)
-    fillOffsets();
-
     // vertexBuffer
     glGenBuffers(1, &mVbo);
     glGenBuffers(1, &mInstanceVBO);

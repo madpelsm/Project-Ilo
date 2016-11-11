@@ -27,6 +27,7 @@ objectLoader::objectLoader(std::string _inputFile) {
             for (size_t v = 0; v < fv; v++) {
                 // access to vertex
 
+
                 tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
                 float vx = attrib.vertices[3 * idx.vertex_index + 0];
                 float vy = attrib.vertices[3 * idx.vertex_index + 1];

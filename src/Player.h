@@ -11,7 +11,6 @@ class Player : GameObject {
     std::vector<GLuint> mIndices;
     /*Shader vertShader, fragShader;
   ShaderProgram p1;*/
-    int mInstances = 1;
     std::vector<glm::vec3> mOffsets;
     glm::vec3 mScale=glm::vec3(1,1,1); // default scale 1
 
@@ -31,12 +30,11 @@ class Player : GameObject {
     void loadDefaultGeometry();
     void refreshShaderTransforms(int shaderProgramID);
 
-    void setInstances(int amount);
-    void fillOffsets(); // temp stuff to try out instancing
     void update();
     void createIndices();
     void createNormals();
     void cleanup();
+    void addInstance(glm::vec3 _offset);
     glm::vec3 getPosition();
 
     void render(int shaderProgramID);

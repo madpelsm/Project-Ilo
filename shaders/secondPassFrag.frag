@@ -10,14 +10,14 @@ struct OmniLight{
 in vec2 TexCoords;
 
 vec3 calculateLightColor(vec3 FragPos, vec3 normal, OmniLight omniLight);
-#define Amount_omniLights 7
 
+uniform float Amount_omniLights;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gMtlColor;
 uniform sampler2D gMtlProp;
-uniform OmniLight omniLights[Amount_omniLights];
+uniform OmniLight omniLights[256];
 uniform vec3 eyePos;
 
 out vec3 FragColor;

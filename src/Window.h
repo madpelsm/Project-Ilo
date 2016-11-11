@@ -32,7 +32,6 @@ class Window {
     Shader vertShader, fragShader, firstPassVertShader, firstPassFragShader, secondPassVertShader, secondPassFragShader,
         thirdPassVertShader, thirdPassFragShader;
     std::vector<Player *> mGameObjects;
-    Light mOmniLight, mOmniLight2;
     std::vector<Light *> mOmniLights;
     GLuint gbuffer, gPosition, gNormal, gMaterialColor, gMaterialProps, rboDepth, quadVao, ppFBO, ppRBO, screenTex;
     GLuint attachments[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
