@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     // set camera
     // Position, then target then define the up direction (+Y = Up)
     float eyeHeight = 2.0f;
-    Camera c1(glm::vec3(0, eyeHeight, 0), glm::vec3(0, eyeHeight, -1.5f), glm::vec3(0, 1, 0));
+    Camera c1(glm::vec3(0, eyeHeight, 0), glm::vec3(0, 0, -1));
     w.setCamera(c1);
     // set player and init him
     Player *p1 = new Player("./shapes/miniforest.obj");

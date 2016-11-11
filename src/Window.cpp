@@ -327,7 +327,7 @@ void Window::checkEvents() {
         case SDL_KEYDOWN:
             switch (event.key.keysym.scancode) {
             case SDL_SCANCODE_RETURN:
-                if (event.key.keysym.mod == KMOD_LALT) {
+                if (event.key.keysym.mod & KMOD_LALT) {
                     if (!fullscreen) {
                         fullscreen = true;
                         SDL_SetWindowFullscreen(mSDLwindow, 1);

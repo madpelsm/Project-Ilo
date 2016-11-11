@@ -4,11 +4,11 @@
 Camera::Camera() {
 }
 
-Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
-    mUp = up;
-    mTarget = target;
+Camera::Camera(glm::vec3 position, glm::vec3 direction) {
+    mUp = glm::vec3(0, 1, 0);
+    mTarget = position+direction;
     mPosition = position;
-    glm::vec3 LookDirection = mTarget - mPosition;
+    glm::vec3 LookDirection = direction;
     mLookDir = normalize(LookDirection);
     update();
 }

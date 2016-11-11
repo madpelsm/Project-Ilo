@@ -10,7 +10,7 @@ class Camera {
     glm::vec3 mTarget;
     glm::vec3 mPosition, mLookDir, mNormalizedXZLookDir;
     Camera();
-    Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up);
+    Camera(glm::vec3 position, glm::vec3 target);
     ~Camera();
 
     void move(glm::vec3 position, glm::vec3 target);
