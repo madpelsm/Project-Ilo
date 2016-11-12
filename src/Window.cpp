@@ -65,7 +65,7 @@ void Window::preparePostProcessing() {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Post processing fbo not complete!" << std::endl;
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 1);
 }
 
 void Window::init() {
@@ -88,7 +88,7 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     // vsync
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(0);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
@@ -247,44 +247,29 @@ void Window::initQuadMesh() {
 void Window::checkEvents() {
     SDL_PumpEvents();
     const Uint8 *state = SDL_GetKeyboardState(NULL);
-    // for multiple keyinputs at once
     if (state[SDL_SCANCODE_A]) {
-        std::cout << "left" << std::endl;
+        // left
         mCamera.movePerpendicularOnDir(-walkAroundSpeed);
-        /*mCamera.mPosition.x -= mPlayer.xSpd;
-        mCamera.mTarget.x -= mPlayer.xSpd;*/
-        // mPlayer.mX -= mPlayer.xSpd;
     }
     if (state[SDL_SCANCODE_D]) {
-        std::cout << "right" << std::endl;
+        // right
         mCamera.movePerpendicularOnDir(walkAroundSpeed);
-        /*mCamera.mTarget.x += mPlayer.xSpd;
-        mCamera.mPosition.x += mPlayer.xSpd;*/
-        // mPlayer.mX += mPlayer.xSpd;
     }
     if (state[SDL_SCANCODE_W]) {
-        std::cout << "up" << std::endl;
+        // up
         mCamera.moveWithDir(walkAroundSpeed);
-        /*mCamera.mPosition.z -= mPlayer.ySpd;
-        mCamera.mTarget.z -= mPlayer.ySpd;*/
-        // mPlayer.mZ += mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_S]) {
-        std::cout << "down" << std::endl;
+        // down
         mCamera.moveWithDir(-walkAroundSpeed);
-        /*mCamera.mPosition.z += mPlayer.ySpd;
-        mCamera.mTarget.z += mPlayer.ySpd;*/
-        // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_Q]) {
-        std::cout << "down" << std::endl;
+        // left
         mCamera.rotateJaw(mMouseSensitivity);
-        // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_E]) {
-        std::cout << "down" << std::endl;
+        // right
         mCamera.rotateJaw(-mMouseSensitivity);
-        // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_ESCAPE]) {
         std::cout << "Closing" << std::endl;
@@ -485,6 +470,7 @@ void Window::renderSecondPass() {
 }
 
 void Window::renderThirdPass() {
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     thirdPassShader.useProgram();
     glActiveTexture(GL_TEXTURE0);

@@ -76,6 +76,7 @@ glm::vec3 Player::getPosition() {
 
 void Player::addInstance(glm::vec3 _offset) {
     std::cout << _offset.x << std::endl;
+    mOffsetsChanged = true;
     mOffsets.push_back(_offset);
 }
 
@@ -86,6 +87,13 @@ void Player::update() {
 
 void Player::render(int shaderProgramID) {
     // set transform
+    if(mOffsetsChanged){
+        std::cout << "uploading new instance data" << std::endl;
+        glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
+        glBufferData(GL_ARRAY_BUFFER, mOffsets.size() * sizeof(glm::vec3), &mOffsets[0], GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        mOffsetsChanged = false;
+    }
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
     glUniform1f(glGetUniformLocation(shaderProgramID, "time"),SDL_GetTicks()/1000.0f);
     glBindVertexArray(mVaoPlayer);
@@ -133,6 +141,8 @@ void Player::initGL() {
     glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
     glVertexAttribDivisor(4, 1);
+
+    mOffsetsChanged = false;
 
     ////indices
     // glGenBuffers(1, &mIbo);

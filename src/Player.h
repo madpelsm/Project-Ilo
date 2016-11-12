@@ -13,6 +13,7 @@ class Player : GameObject {
   ShaderProgram p1;*/
     std::vector<glm::vec3> mOffsets;
     glm::vec3 mScale=glm::vec3(1,1,1); // default scale 1
+    bool mOffsetsChanged = false;
 
   public:
     std::string mGeomPath = "./shapes/suzanne.obj";
