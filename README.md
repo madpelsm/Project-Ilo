@@ -7,7 +7,7 @@
 <b>S</b>: move back </br>
 <b>D</b>: move right </br>
 <b>R</b>: remove last placed light</br>
-<b>R+Left CTRL</b>: remove last placed object</br>
+<b>R+LEFT CTRL</b>: remove last placed object</br>
 <b>R+LEFT ALT</b>: remove all placed light</br>
 <b>LEFT MOUSE</b>: place object and light</br>
 <b>RIGHT MOUSE</b>: detach object from user mouse control</br>
