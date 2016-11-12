@@ -17,7 +17,7 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gMtlColor;
 uniform sampler2D gMtlProp;
-uniform OmniLight omniLights[256];
+uniform OmniLight omniLights[500];
 uniform vec3 eyePos;
 
 out vec3 FragColor;

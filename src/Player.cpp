@@ -75,6 +75,7 @@ glm::vec3 Player::getPosition() {
 }
 
 void Player::addInstance(glm::vec3 _offset) {
+    std::cout << _offset.x << std::endl;
     mOffsets.push_back(_offset);
 }
 
@@ -90,8 +91,7 @@ void Player::render(int shaderProgramID) {
     glBindVertexArray(mVaoPlayer);
 
     glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size(), GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
-    // glDrawElements(GL_TRIANGLES,mIndices.size(), GL_UNSIGNED_INT,
-    // &mIndices[0]);
+    
     refreshShaderTransforms(shaderProgramID);
 }
 

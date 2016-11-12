@@ -3,6 +3,9 @@ int main(int argc, char *argv[]) {
     Window w(800, 600, "Project Ilo");
     w.setvSync(false);
     w.setSSAA(1.0);
+    w.setMouseSensitivity(0.001f);
+    w.setScrollSensitivity(1.0f);
+    w.setFOV(1.4f);
     // set camera
     // Position, then target then define the up direction (+Y = Up)
     float eyeHeight = 2.0f;

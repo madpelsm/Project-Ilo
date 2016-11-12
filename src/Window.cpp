@@ -244,19 +244,6 @@ void Window::initQuadMesh() {
     glBindVertexArray(0);
 }
 
-void Window::run() {
-    if (!windowInitialised) {
-        std::cout << "Window not initialised" << std::endl;
-        return;
-    }
-    while (!closed) {
-        checkEvents();
-        update();
-        upload();
-        render();
-    }
-}
-
 void Window::checkEvents() {
     SDL_PumpEvents();
     const Uint8 *state = SDL_GetKeyboardState(NULL);
@@ -265,38 +252,38 @@ void Window::checkEvents() {
         std::cout << "left" << std::endl;
         mCamera.movePerpendicularOnDir(-walkAroundSpeed);
         /*mCamera.mPosition.x -= mPlayer.xSpd;
-    mCamera.mTarget.x -= mPlayer.xSpd;*/
+        mCamera.mTarget.x -= mPlayer.xSpd;*/
         // mPlayer.mX -= mPlayer.xSpd;
     }
     if (state[SDL_SCANCODE_D]) {
         std::cout << "right" << std::endl;
         mCamera.movePerpendicularOnDir(walkAroundSpeed);
         /*mCamera.mTarget.x += mPlayer.xSpd;
-    mCamera.mPosition.x += mPlayer.xSpd;*/
+        mCamera.mPosition.x += mPlayer.xSpd;*/
         // mPlayer.mX += mPlayer.xSpd;
     }
     if (state[SDL_SCANCODE_W]) {
         std::cout << "up" << std::endl;
         mCamera.moveWithDir(walkAroundSpeed);
         /*mCamera.mPosition.z -= mPlayer.ySpd;
-    mCamera.mTarget.z -= mPlayer.ySpd;*/
+        mCamera.mTarget.z -= mPlayer.ySpd;*/
         // mPlayer.mZ += mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_S]) {
         std::cout << "down" << std::endl;
         mCamera.moveWithDir(-walkAroundSpeed);
         /*mCamera.mPosition.z += mPlayer.ySpd;
-    mCamera.mTarget.z += mPlayer.ySpd;*/
+        mCamera.mTarget.z += mPlayer.ySpd;*/
         // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_Q]) {
         std::cout << "down" << std::endl;
-        mCamera.rotateJaw(rotateSpeed);
+        mCamera.rotateJaw(mMouseSensitivity);
         // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_E]) {
         std::cout << "down" << std::endl;
-        mCamera.rotateJaw(-rotateSpeed);
+        mCamera.rotateJaw(-mMouseSensitivity);
         // mPlayer.mZ -= mPlayer.ySpd;
     }
     if (state[SDL_SCANCODE_ESCAPE]) {
@@ -305,6 +292,10 @@ void Window::checkEvents() {
     }
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
+
+        case SDL_MOUSEWHEEL:
+            mCamera.setTargetDistance(event.wheel.y);
+            break;
         case SDL_WINDOWEVENT:
             switch (event.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
@@ -321,20 +312,50 @@ void Window::checkEvents() {
             mCamera.rotatePitch((-10) * event.tfinger.dy);
             break;
         case SDL_MOUSEMOTION:
-            mCamera.rotateJaw((-1) * rotateSpeed * event.motion.xrel);
-            mCamera.rotatePitch((-1) * rotateSpeed * event.motion.yrel);
+            mCamera.rotateJaw((-1) * mMouseSensitivity * event.motion.xrel);
+            mCamera.rotatePitch((-1) * mMouseSensitivity * event.motion.yrel);
             break;
         case SDL_MOUSEBUTTONDOWN:
             switch (event.button.button) {
             case SDL_BUTTON_LEFT:
-                mGameObjects.push_back(new Player(*mGameObjects[1]));
+                if (selectedObj != -1) {
+                    mGameObjects.push_back(new Player(*mGameObjects[selectedObj]));
+                }
                 mOmniLights.push_back(new Light(*mOmniLights[0]));
                 std::cout << "there are now " << Light::lightsCreated << " lights in the scene!" << std::endl;
-                
+                break;
+            case SDL_BUTTON_RIGHT:
+                if (selectedObj != -1) {
+                    previouslySelected = selectedObj;
+                    selectedObj = -1;
+                }
+                else {
+                    selectedObj = previouslySelected;
+                }
+                break;
+
             }
             break;
+        
         case SDL_KEYDOWN:
             switch (event.key.keysym.scancode) {
+            case SDL_SCANCODE_0:
+                if (mGameObjects.size() > 0) {
+                    previouslySelected = selectedObj;
+                    selectedObj = 0;
+                }
+                break;
+            case SDL_SCANCODE_1:
+                if (mGameObjects.size() > 1) {
+                    selectedObj = 1;
+                }
+                break;
+            case SDL_SCANCODE_2:
+                if (mGameObjects.size() >2) {
+                    selectedObj = 2;
+                }
+                break;
+
             case SDL_SCANCODE_RETURN:
                 if (event.key.keysym.mod & KMOD_LALT) {
                     if (!fullscreen) {
@@ -348,6 +369,17 @@ void Window::checkEvents() {
                         fullscreen = false;
                         SDL_SetWindowFullscreen(mSDLwindow, 0);
                     }
+                }
+                break;
+            case SDL_SCANCODE_R:
+                if (event.key.keysym.mod & KMOD_LALT) {
+                    removeAllPlacedLights();
+                }
+                else if (event.key.keysym.mod & KMOD_LCTRL) {
+                    removeLastPlacedObj();
+                }
+                else {
+                    removeLastPlacedLight();
                 }
                 break;
             case SDL_SCANCODE_F11:
@@ -365,6 +397,21 @@ void Window::checkEvents() {
     }
 }
 
+void Window::run() {
+    if (!windowInitialised) {
+        std::cout << "Window not initialised" << std::endl;
+        return;
+    }
+    while (!closed) {
+        checkEvents();
+        update();
+        upload();
+        render();
+    }
+}
+
+
+
 void Window::update() {
     // prepare the transformations
     mCamera.update();
@@ -376,7 +423,9 @@ void Window::update() {
     // you can put lightmovements here
 
     mOmniLights[0]->move(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z);
-    mGameObjects[1]->setTransform(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z,0);
+    if (selectedObj > 0) {
+        mGameObjects[selectedObj]->setTransform(mCamera.mTarget.x, mCamera.mTarget.y, mCamera.mTarget.z, 0);
+    }
     // update gameobjects
     // box2d! pass a world
 }
@@ -387,7 +436,7 @@ void Window::upload() {
     // upload perspective info
     firstPassShader.useProgram();
     int perspLoc = glGetUniformLocation(firstPassShader.getProgramID(), "persp");
-    glm::mat4 perspM = glm::perspective(1.4f, mWidth / (float)mHeight, 0.1f, 50.0f); // 90 degrees fov
+    glm::mat4 perspM = glm::perspective(mFOV, mWidth / (float)mHeight, 0.1f, 50.0f); // 90 degrees fov
     glProgramUniformMatrix4fv(firstPassShader.getProgramID(), perspLoc, 1, GL_FALSE, glm::value_ptr(perspM));
 
     // set modelTransform to unity as start
@@ -517,6 +566,14 @@ void Window::setSSAA(float _SSAAamount) {
     }
 }
 
+void Window::setMouseSensitivity(float _sensitivity) {
+    mMouseSensitivity = _sensitivity;
+}
+
+void Window::setScrollSensitivity(float _sensitivity) {
+    mSrollSensitivity = _sensitivity;
+}
+
 void Window::setPlayer(Player &p) {
     // set the player for this game
     mGameObjects.push_back(&p);
@@ -526,6 +583,34 @@ void Window::setLight(Light &light) {
     mOmniLights.push_back(&light);
 }
 
+void Window::setFOV(float _fov) {
+    if (0 < _fov && _fov < 3.1415f) {
+        mFOV = _fov;
+    }
+}
+
+void Window::removeAllPlacedLights() {
+    std::cout << "remove all placed lights" << std::endl;
+    while (mOmniLights.size() > 1) {
+        removeLastPlacedLight();
+    }
+}
+
+void Window::removeLastPlacedLight() {
+    if (mOmniLights.size() > 1) {
+        Light::lightsCreated--;
+        mOmniLights.erase(mOmniLights.end() - 1);
+    }
+}
+
+void Window::removeLastPlacedObj() {
+    if (mGameObjects.size() > baseObjects) {
+        mGameObjects.erase(mGameObjects.end() - 1);
+    }
+}
+
+
 void Window::addNPC(Player &npc) {
+    baseObjects++;
     this->mGameObjects.push_back(&npc);
 }

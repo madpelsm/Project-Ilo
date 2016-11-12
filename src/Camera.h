@@ -9,6 +9,7 @@ class Camera {
     glm::vec3 mUp;
     glm::vec3 mTarget;
     glm::vec3 mPosition, mLookDir, mNormalizedXZLookDir;
+    float mTargetDist = 2.0f;
     Camera();
     Camera(glm::vec3 position, glm::vec3 target);
     ~Camera();
@@ -22,4 +23,5 @@ class Camera {
     void rotatePitch(float angle);
     void moveWithDir(float spd);
     void movePerpendicularOnDir(float spd);
+    void setTargetDistance(float _distance);
 };

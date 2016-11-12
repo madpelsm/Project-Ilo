@@ -13,16 +13,20 @@
 #include <iostream>
 
 class Window {
-    int mWidth, mHeight;
+    int mWidth, mHeight, baseObjects = 0;
     std::string mTitle;
     bool closed = false;
     bool windowInitialised = false;
     short frames;
     bool vSync = true,fullscreen = false,windowMaximised = false;
     float lastTime = SDL_GetTicks(),
-          walkAroundSpeed = 0.09f // camera movement speed
+        walkAroundSpeed = 0.09f // camera movement speed
         ,
-          rotateSpeed = 0.01f, mSSAA_amount = 2.0f; // camera rotation speed
+        mMouseSensitivity = 0.01f // camera rotation speed
+        , mSSAA_amount = 2.0f
+        , mSrollSensitivity = 0.5f
+        , mFOV = 1.4f //vertical field of view in radians 
+        , selectedObj = 1, previouslySelected = 0;
   public:
     Camera mCamera;
     ShaderProgram firstPassShader, secondPassShader, thirdPassShader;
@@ -60,6 +64,12 @@ class Window {
     void preparePostProcessing();
     void setvSync(bool vSyncStatus);
     void setSSAA(float _SSAAamount);
+    void setMouseSensitivity(float _sensitivity);
+    void setScrollSensitivity(float _sensitivity);
+    void setFOV(float _fov);
+    void removeAllPlacedLights();
+    void removeLastPlacedLight();
+    void removeLastPlacedObj();
 
     void setCamera(Camera &c);
     void addNPC(Player &npc);
