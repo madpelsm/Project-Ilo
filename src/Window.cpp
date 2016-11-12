@@ -65,7 +65,7 @@ void Window::preparePostProcessing() {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Post processing fbo not complete!" << std::endl;
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, 1);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Window::init() {
@@ -88,7 +88,7 @@ void Window::init() {
     }
     glContext = SDL_GL_CreateContext(mSDLwindow);
     // vsync
-    SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(1);
     windowInitialised = true;
     std::cout << "Window initialised correctly" << std::endl;
 
