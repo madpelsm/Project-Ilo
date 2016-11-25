@@ -2,6 +2,13 @@ build/
 Release/
 Debug/
 .vs/
+SDL2-2.0.4/
+glad/
+glm/
+Project Ilo.sln
+Project Ilo.vcxproj
+Project Ilo.vcxproj.user
+Project Ilo.vcxproj.filters
 Project Ilo.VC.db
 
 

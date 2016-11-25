@@ -26,5 +26,9 @@
 <b>Intensity</b>(under specular): This will be define the specular strength</br>
 </br></br>
 I auto set the ambient to 0 when importing, this is more realistic in most cases, however, this makes it not possible to make an object appear to emit light.
-
+</p>
+</br>
+<h3>Build</h3>
+<p>
+Build with SDL2-2.0.4, glm, and glad.
 </p>
