@@ -43,7 +43,7 @@ void Window::sdlDie() {
 
 void Window::preparePostProcessing() {
     glGenFramebuffers(1, &ppFBO);
-    // glGenRenderbuffers(1, &ppRBO);
+    glGenRenderbuffers(1, &ppRBO);
     // gen texture
     glGenTextures(1, &screenTex);
     glBindTexture(GL_TEXTURE_2D, screenTex);
@@ -59,7 +59,7 @@ void Window::preparePostProcessing() {
     glDrawBuffers(1, attch);
 
     glBindRenderbuffer(GL_RENDERBUFFER, ppRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_ATTACHMENT, mWidth, mHeight);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ppRBO);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -72,14 +72,15 @@ void Window::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "failed to intialise video" << std::endl;
     }
-    -SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
+                        SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-    SDL_ShowCursor(SDL_DISABLE);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //SDL_ShowCursor(SDL_DISABLE);
+    //SDL_SetRelativeMouseMode(SDL_TRUE);
 
     mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight,
                                   SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
@@ -120,7 +121,12 @@ void Window::initAssets() {
 }
 
 void Window::initGL() {
-    gladLoadGLLoader(SDL_GL_GetProcAddress);
+    if (!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
+        printf("Something went wrong!\n");
+        exit(-1);
+    }
+    printf("OpenGL %d.%d\n", GLVersion.major, GLVersion.minor);
+
     // glViewport(0, 0, mWidth, mHeight);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // depth testing
@@ -508,7 +514,7 @@ void Window::render() {
     float currentTime = SDL_GetTicks();
     frames++;
     if (currentTime - lastTime >= 1000) {
-        std::cout << frames << std::endl;
+        std::cout << "Frames: " << frames << std::endl;
         frames = 0;
         lastTime += 1000;
     }

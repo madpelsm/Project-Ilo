@@ -12,6 +12,15 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+inline void _glCheckError(const char *file, int line) {
+    GLenum err;
+    while ((err = glGetError()) != 0) {
+        printf("GL Error %x @%s:%d\n", err, file, line);
+    }
+}
+
+#define glCheckError() _glCheckError(__FILE__, __LINE__)
+
 class Window {
     int mWidth, mHeight, baseObjects = 0;
     std::string mTitle;
