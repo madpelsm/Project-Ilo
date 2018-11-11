@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <SDL.h>
 Player::Player() {
-    mOffsets.push_back(glm::vec3(0,0,0));
+    mOffsets.push_back(glm::vec3(0, 0, 0));
 }
 Player::~Player() {
     cleanup();
@@ -65,7 +65,6 @@ void Player::createNormals() {
     std::cout << "normals Created for player" << std::endl;
 }
 
-
 void Player::setScale(glm::vec3 _scale) {
     mScale = _scale;
 }
@@ -75,19 +74,19 @@ glm::vec3 Player::getPosition() {
 }
 
 void Player::addInstance(glm::vec3 _offset) {
-    std::cout << _offset.x << std::endl;
+    std::cout << "Instance offset x: " << _offset.x << std::endl;
     mOffsetsChanged = true;
     mOffsets.push_back(_offset);
 }
 
 void Player::update() {
-    mTransformation =
-        glm::mat4(glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) * glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1))*glm::scale(glm::mat4(1),mScale));
+    mTransformation = glm::mat4(glm::translate(glm::mat4(1), glm::vec3(mX, mY, mZ)) *
+                                glm::rotate(glm::mat4(1), mRotAngle, glm::vec3(0, 0, 1)) * glm::scale(glm::mat4(1), mScale));
 }
 
 void Player::render(int shaderProgramID) {
     // set transform
-    if(mOffsetsChanged){
+    if (mOffsetsChanged) {
         std::cout << "uploading new instance data" << std::endl;
         glBindBuffer(GL_ARRAY_BUFFER, mInstanceVBO);
         glBufferData(GL_ARRAY_BUFFER, mOffsets.size() * sizeof(glm::vec3), &mOffsets[0], GL_STATIC_DRAW);
@@ -95,11 +94,13 @@ void Player::render(int shaderProgramID) {
         mOffsetsChanged = false;
     }
     glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(mTransformation));
-    glUniform1f(glGetUniformLocation(shaderProgramID, "time"),SDL_GetTicks()/1000.0f);
+    glUniform1f(glGetUniformLocation(shaderProgramID, "time"), SDL_GetTicks() / 1000.0f);
     glBindVertexArray(mVaoPlayer);
 
-    glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size(), GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
-    
+    //glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size(), GL_UNSIGNED_INT, &mIndices[0], mOffsets.size());
+    glDrawElementsInstanced(GL_TRIANGLES, mVertices2.size(), GL_UNSIGNED_INT, 0, mOffsets.size());
+
+
     refreshShaderTransforms(shaderProgramID);
 }
 
@@ -145,10 +146,9 @@ void Player::initGL() {
     mOffsetsChanged = false;
 
     ////indices
-    // glGenBuffers(1, &mIbo);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*mIndices.size(),
-    // &mIndices[0], GL_STATIC_DRAW);
+    glGenBuffers(1, &mIbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint)*mIndices.size(), &mIndices[0], GL_STATIC_DRAW);
     std::cout << "drawing " << mVertices2.size() << " vertices with " << mIndices.size() << " indices" << std::endl;
     std::cout << "initialised  player gl" << std::endl;
 }

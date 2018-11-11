@@ -26,11 +26,10 @@ include_directories(${SDL2_INCLUDE_DIR}/SDL2)
 include_directories(${GLM_INCLUDE_DIR})
 
 file(GLOB ILO_SRC_FILES "./src/*.cpp")
-file(GLOB ILO_HDR_FILES "./src/*.h")
 
-set(ILO_SRC_FILES ${ILO_SRC_FILES} tiny_obj_loader.cc)
+set(ILO_SRC_FILES ${ILO_SRC_FILES} src/tiny_obj_loader.cc)
 set(GLAD_SRC_FILES glad/src/glad.c)
 
-add_executable(ilo ${ILO_SRC_FILES} ${GLAD_SRC_FILES} ${ILO_HDR_FILES})
+add_executable(ilo ${ILO_SRC_FILES} ${GLAD_SRC_FILES})
 
 target_link_libraries(ilo ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${CMAKE_DL_LIBS})

@@ -1,5 +1,6 @@
 #include "Shader.h"
 #include <iostream>
+
 Shader::Shader() {
 }
 bool Shader::loadShader(std::string pos, int shaderType) {
