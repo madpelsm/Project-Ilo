@@ -1,5 +1,5 @@
 #include "Player.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 Player::Player() {
     mOffsets.push_back(glm::vec3(0, 0, 0));
 }

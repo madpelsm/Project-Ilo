@@ -13,6 +13,7 @@ Window::Window(int width, int height, std::string title) {
     mTitle = title;
     std::cout << "Window with parameters set" << std::endl;
     init();
+    resize();
 }
 
 Window::~Window() {
@@ -82,11 +83,14 @@ void Window::init() {
     //SDL_ShowCursor(SDL_DISABLE);
     //SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    mSDLwindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight,
-                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+    mSDLwindow = SDL_CreateWindow(
+        mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        mWidth, mHeight,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
     if (mSDLwindow == nullptr) {
         std::cout << "failed to create Window" << std::endl;
     }
+    SDL_SetRelativeMouseMode(SDL_TRUE);//mouse grab
     glContext = SDL_GL_CreateContext(mSDLwindow);
     // vsync
     SDL_GL_SetSwapInterval(1);
@@ -521,7 +525,8 @@ void Window::render() {
 }
 
 void Window::resize() {
-    SDL_GetWindowSize(mSDLwindow, &mWidth, &mHeight);
+    //SDL_GetWindowSize(mSDLwindow, &mWidth, &mHeight);
+    SDL_GL_GetDrawableSize(mSDLwindow, &mWidth, &mHeight); //fix for high dpi displays like mac
     // clean up previous buffers
     glDeleteFramebuffers(1, &gbuffer);
     glDeleteTextures(1, &gPosition);
